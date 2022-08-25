@@ -1,0 +1,86 @@
+type Query {
+	_empty: String
+}
+
+type Mutation {
+	_empty: String
+}
+
+scalar Upload
+scalar Date
+scalar Null
+scalar NullableString
+scalar NullableID
+
+input IDFilter {
+	contains: ID
+	startsWith: ID
+	endsWith: ID
+	equals: ID
+	gt: ID
+	gte: ID
+	lt: ID
+	lte: ID
+	mode: QueryMode
+	not: IDFilter
+	in: [ID!]
+	notIn: [ID!]
+}
+
+input RelationshipNullableFilter {
+	id: ID
+	is: Null
+	isNot: Null
+}
+
+input ArrayNullableFilter {
+	equals: [String!]
+	hasSome: [String!]
+	hasEvery: [String!]
+	has: String
+	isEmpty: Boolean
+}
+
+input StringNullableFilter {
+	equals: String
+	in: [String!]
+	notIn: [String!]
+	lt: String
+	lte: String
+	gt: String
+	gte: String
+	contains: String
+	startsWith: String
+	endsWith: String
+	mode: QueryMode
+	not: NestedStringNullableFilter
+}
+
+input NestedStringNullableFilter {
+	equals: String
+	in: [String!]
+	notIn: [String!]
+	lt: String
+	lte: String
+	gt: String
+	gte: String
+	contains: String
+	startsWith: String
+	endsWith: String
+	not: NestedStringNullableFilter
+}
+
+enum QueryMode {
+	default
+	insensitive
+}
+
+enum OrderDirection {
+	asc
+	desc
+}
+
+enum Gender {
+	MALE
+	FEMALE
+}

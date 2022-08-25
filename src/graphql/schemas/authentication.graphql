@@ -1,0 +1,69 @@
+extend type Query {
+	login(data: LoginInput!): Authentication
+	checkEmail(data: CheckEmailInput!): Boolean
+	refreshToken(data: RefreshTokenInput!): Authentication
+}
+
+extend type Mutation {
+	register(data: RegistrationInput!): Authentication
+	requestPasswordReset(data: RequestPasswordResetInput!): Boolean
+	resetPassword(data: ResetPasswordInput!): Authentication
+}
+
+type Authentication {
+	user: User!
+	token: String
+}
+
+input LoginInput {
+	email: String!
+	password: String!
+}
+
+input CheckEmailInput {
+	email: String!
+}
+
+input RefreshTokenInput {
+	token: String!
+}
+
+enum Level {
+	SCHOOL
+	UNIVERSITY
+	OTHER
+}
+
+input StudentRegistrationInput {
+	level: Level!
+	school: ID
+	grade: ID
+	batch: String
+	major: String
+}
+
+input EducatorRegistrationInput {
+	cpr: Upload!
+	cv: Upload!
+	university: ID
+}
+
+input RegistrationInput {
+	firstName: String!
+	lastName: String!
+	email: String!
+	password: String!
+	mobile: String!
+	gender: Gender!
+	student: StudentRegistrationInput
+	educator: EducatorRegistrationInput
+}
+
+input RequestPasswordResetInput {
+	email: String!
+}
+
+input ResetPasswordInput {
+	token: String!
+	password: String!
+}

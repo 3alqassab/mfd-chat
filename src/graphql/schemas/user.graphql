@@ -1,0 +1,95 @@
+extend type Query {
+	myUser: User
+	user(where: UserWhereUniqueInput!): User
+	users(
+		where: UserWhereInput = {}
+		orderBy: [UserOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [User!]!
+	usersCount(where: UserWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createUser(data: UserCreateInput!): User
+	updateMyUser(data: MyUserUpdateInput!): User
+	updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
+	deleteUser(where: UserWhereUniqueInput!): User
+}
+
+enum UserRole {
+	STUDENT
+	EDUCATOR
+}
+
+type User {
+	id: ID!
+	firstName: String!
+	lastName: String!
+	email: String!
+	password: String!
+	mobile: String!
+	gender: Gender!
+	role: UserRole!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input UserWhereUniqueInput {
+	id: ID
+	email: String
+}
+
+input UserRoleNullableFilter {
+	equals: UserRole
+	in: [UserRole!]
+	notIn: [UserRole!]
+}
+
+input UserWhereInput {
+	AND: [UserWhereInput!]
+	OR: [UserWhereInput!]
+	NOT: [UserWhereInput!]
+	id: IDFilter
+	name: StringNullableFilter
+	email: StringNullableFilter
+	role: UserRoleNullableFilter
+}
+
+input UserCreateInput {
+	firstName: String!
+	lastName: String!
+	email: String!
+	password: String!
+	mobile: String!
+	gender: Gender!
+	role: UserRole
+}
+
+input UserUpdateInput {
+	firstName: String
+	lastName: String
+	email: String
+	password: String
+	mobile: String
+	gender: Gender
+	role: UserRole
+}
+
+input MyUserUpdateInput {
+	firstName: String
+	lastName: String
+	email: String
+	mobile: String
+	gender: Gender
+}
+
+input UserOrderByInput {
+	id: OrderDirection
+	name: OrderDirection
+	email: OrderDirection
+	role: OrderDirection
+
+	createdAt: OrderDirection
+}
