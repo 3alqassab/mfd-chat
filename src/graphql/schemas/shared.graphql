@@ -1,0 +1,134 @@
+enum Gender {
+	MALE
+	FEMALE
+}
+
+enum Level {
+	SCHOOL
+	UNIVERSITY
+	OTHER
+}
+
+enum SubjectLevel {
+	SCHOOl
+	UNIVERSITY
+}
+
+type School {
+	id: ID!
+
+	name: String!
+	nameAr: String
+
+	grades: [Grade!]
+	students: [Student!]
+	subjects: [Subject!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Grade {
+	id: ID!
+
+	name: String!
+	nameAr: String
+
+	students: [Student!]
+	schools: [School!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Subject {
+	id: ID!
+
+	thumbnailUrl: String
+	name: String!
+	nameAr: String
+	level: SubjectLevel!
+	tags: [String!]
+	major: String
+
+	# University
+	year: Int
+
+	createdBy: Organization
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Organization {
+	id: ID!
+
+	name: String!
+	nameAr: String
+	imageUrl: String!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type University {
+	id: ID!
+
+	name: String!
+	nameAr: String
+	majors: [String!]
+	educators: [Educator!]
+	subjects: [Subject!]
+	stundents: [Student!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Class {
+	id: ID!
+
+	thumbnailUrl: String
+	description: String
+	timings: [String!]
+	startTime: Date!
+	endTime: Date!
+	price: Float!
+	points: Int!
+
+	subject: Subject
+	educator: Educator
+
+	users: [User!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Wallet {
+	id: ID!
+
+	points: Int!
+	purchases: [Purchase!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+enum PurchaseType {
+	POINTS
+	CLASS
+}
+
+type Purchase {
+	id: ID!
+
+	transactionId: Int!
+	type: PurchaseType!
+	points: Int
+	class: Class
+	wallet: Wallet!
+
+	createdAt: Date!
+	updatedAt: Date!
+}

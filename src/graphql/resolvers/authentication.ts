@@ -1,6 +1,6 @@
 import { Resolvers } from '../../gql-types'
 import { Token } from '../../context'
-import { validate as validateEmail } from 'email-validator'
+import { validateEmail, validatePassword } from '../../functions/validate'
 import dayjs from 'dayjs'
 import ERRORS, { ApolloError } from '../../functions/errors'
 import Hash from '../../functions/hash'
@@ -13,36 +13,13 @@ if (!API_SECRET)
 const signJWT = (payload: Token) =>
 	jwt.sign(payload, API_SECRET, { expiresIn: '31d' })
 
-const validatePassword = (password: string) => {
-	let valid = true
-
-	if (password.length < 8) valid = false
-	if (password.length > 255) valid = false
-
-	const tests = [/^(?=.*[A-Z])/, /^(?=.*[0-9])/, /^(?=.*[!@#$%^&*])/]
-
-	tests.forEach(test => {
-		if (!test.test(password)) valid = false
-	})
-
-	return valid
-}
-
 const Authentication: Resolvers = {
 	Query: {
 		async login(_, { data: { email, password } }, { database }) {
-			if (!validateEmail(email))
-				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
-					'Please provide a valid email address',
-				)
+			validateEmail(email)
 
 			const user = await database.user.findUnique({
 				where: { email: email.toLowerCase() },
-				include: {
-					student: true,
-					educator: true,
-				},
 			})
 
 			if (!user) throw ApolloError(ERRORS.NOT_FOUND)
@@ -57,11 +34,7 @@ const Authentication: Resolvers = {
 		},
 
 		async checkEmail(_, { data: { email } }, { database }) {
-			if (!validateEmail(email))
-				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
-					'Please provide a valid email address',
-				)
+			validateEmail(email)
 
 			const user = await database.user.findUnique({
 				where: { email: email.toLowerCase() },
@@ -79,7 +52,9 @@ const Authentication: Resolvers = {
 
 			const { id } = verify(token.replace(/^Bearer /i, ''), API_SECRET) as Token
 
-			const user = await database.user.findUnique({ where: { id } })
+			const user = await database.user.findUnique({
+				where: { id },
+			})
 
 			if (!user) throw ApolloError(ERRORS.INVALID_TOKEN)
 
@@ -102,17 +77,8 @@ const Authentication: Resolvers = {
 					'Please select either a student or educator',
 				)
 
-			if (!validatePassword(password))
-				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
-					'Password must at least 8 characters, contain at least one uppercase letter, one number, and one special character',
-				)
-
-			if (!validateEmail(email))
-				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
-					'Please provide a valid email address',
-				)
+			validatePassword(password)
+			validateEmail(email)
 
 			const user = await database.user.create({
 				data: {
@@ -142,11 +108,7 @@ const Authentication: Resolvers = {
 		},
 
 		async requestPasswordReset(_, { data: { email } }, { database }) {
-			if (!validateEmail(email))
-				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
-					'Please provide a valid email address',
-				)
+			validateEmail(email)
 
 			const user = await database.user.findUnique({
 				where: { email: email.toLowerCase() },
@@ -193,11 +155,7 @@ const Authentication: Resolvers = {
 				)
 			}
 
-			if (!validatePassword(password))
-				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
-					'Password must at least 8 characters, contain at least one uppercase letter, one number, and one special character',
-				)
+			validatePassword(password)
 
 			const user = await database.user.update({
 				where: { id },

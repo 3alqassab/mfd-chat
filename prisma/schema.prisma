@@ -35,12 +35,15 @@ model User {
 
   student       Student?
   educator      Educator?
-  wallet        Wallet?
   answers       ClassAnswer[]
   notifications Notification[]
   comments      PostComment[]
   posts         Post[]         @relation("createdPosts")
   likedPosts    Post[]         @relation("likedPosts")
+
+  wallet Wallet?
+
+  classes Class[]
 }
 
 model Connection {
@@ -72,7 +75,7 @@ model Notification {
   liveStream   LiveStream? @relation(fields: [liveStreamId], references: [id])
   liveStreamId String?
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 }
 
@@ -83,7 +86,7 @@ model Wallet {
 
   points Int @default(0)
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 
   purchases Purchase[]
@@ -123,7 +126,8 @@ model Grade {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name   String
+  nameAr String?
 
   students Student[]
   schools  School[]
@@ -134,7 +138,8 @@ model School {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name   String
+  nameAr String?
 
   grades   Grade[]
   students Student[]
@@ -146,12 +151,14 @@ model University {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  name String
+  name   String
+  nameAr String?
 
   majors    String[]
   educators Educator[]
 
-  subject Subject[]
+  subjects Subject[]
+  students Student[]
 }
 
 model Student {
@@ -169,14 +176,15 @@ model Student {
   gradeId String?
 
   // University
-  batch String?
+  batch        String?
+  university   University? @relation(fields: [universityId], references: [id])
+  universityId String?
 
   // Shared
   major String?
 
-  user    User    @relation(fields: [userId], references: [id])
-  userId  String  @unique
-  classes Class[]
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
 }
 
 model Educator {
@@ -193,7 +201,7 @@ model Educator {
   university   University? @relation(fields: [universityId], references: [id])
   universityId String?
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
 
   subjects Subject[]
@@ -211,6 +219,7 @@ model Organization {
   updatedAt DateTime @updatedAt
 
   name     String
+  nameAr   String?
   imageUrl String
 
   subjects Subject[]
@@ -222,10 +231,13 @@ model Subject {
   updatedAt DateTime @updatedAt
 
   thumbnailUrl String?
-  name         String
-  level        SubjectLevel
-  tags         String[]
-  major        String?
+
+  name   String
+  nameAr String?
+
+  level SubjectLevel
+  tags  String[]
+  major String?
 
   // University
   year Int?
@@ -309,15 +321,17 @@ model ClassChapterContent {
   updatedAt DateTime @updatedAt
 
   type ClassChapterContentType
-  url  String?
+
+  // PDF or Video
+  url String?
 
   // Live
-  liveStreams  LiveStream? @relation(fields: [liveStreamId], references: [id])
+  liveStream   LiveStream? @relation(fields: [liveStreamId], references: [id])
   liveStreamId String?
 
   // TODO: Add quiz relation
 
-  chapter   ClassChapter? @relation(fields: [chapterId], references: [id])
+  chapter   ClassChapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   chapterId String?
 }
 
@@ -328,7 +342,7 @@ model ClassChapter {
 
   title String
 
-  class   Class  @relation(fields: [classId], references: [id])
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
   classId String
 
   content ClassChapterContent[]
@@ -344,19 +358,19 @@ model Class {
   timings      String[]
   startTime    DateTime
   endTime      DateTime
-  price        Int
+  price        Float
   points       Int
 
-  subject   Subject? @relation(fields: [subjectId], references: [id])
+  subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
   subjectId String?
 
-  educator   Educator? @relation(fields: [educatorId], references: [id])
+  educator   Educator? @relation(fields: [educatorId], references: [id], onDelete: SetNull)
   educatorId String?
 
   resources ClassResource[]
-  students  Student[]
+  users     User[]
   questions ClassQuestion[]
-  Purchase  Purchase[]
+  purchases Purchase[]
   chapters  ClassChapter[]
   posts     Post[]
 }
@@ -376,10 +390,10 @@ model PostComment {
 
   text String
 
-  post   Post   @relation(fields: [postId], references: [id])
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
   postId String
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
 }
 
@@ -397,10 +411,10 @@ model Post {
 
   postTo PostTo[]
 
-  class   Class?  @relation(fields: [classId], references: [id])
+  class   Class?  @relation(fields: [classId], references: [id], onDelete: SetNull)
   classId String?
 
-  user   User   @relation("createdPosts", fields: [userId], references: [id])
+  user   User   @relation("createdPosts", fields: [userId], references: [id], onDelete: Cascade)
   userId String
 
   likes    User[]        @relation("likedPosts")

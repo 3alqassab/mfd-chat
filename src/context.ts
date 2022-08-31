@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import { User } from './gql-types'
 import { verify } from 'jsonwebtoken'
 import ERRORS, { ApolloError } from './functions/errors'
+import Hash from './functions/hash'
 
 export const database = new PrismaClient()
 
@@ -43,6 +44,58 @@ export default async function ContextSetup({
 
 	if (!API_SECRET)
 		throw new Error('The API_SECRET environment variable must be set')
+
+	// // Create main user
+	// await database.user.create({
+	// 	data: {
+	// 		id: '091dae42-729d-4fbe-9bdd-f85aed64c66e',
+	// 		email: 'aliq@aacademybh.com',
+	// 		firstName: 'Ali',
+	// 		lastName: 'AlQassab',
+	// 		gender: 'MALE',
+	// 		mobile: '+97332122208',
+	// 		password: Hash('11111111'),
+	// 		educator: {
+	// 			create: {
+	// 				active: true,
+	// 			},
+	// 		},
+	// 		student: {
+	// 			create: {
+	// 				level: 'UNIVERSITY',
+	// 				batch: '2017',
+	// 				major: 'Marketing',
+	// 				university: {
+	// 					create: {
+	// 						name: {
+	// 							create: {
+	// 								name: 'Bahrain Polytechnic',
+	// 								nameAr: 'بوليتكنك البحرين',
+	// 							},
+	// 						},
+	// 					},
+	// 				},
+	// 				school: {
+	// 					create: {
+	// 						name: {
+	// 							create: {
+	// 								name: 'Ahmed AlOmran',
+	// 								nameAr: 'أحمد العمران',
+	// 							},
+	// 						},
+	// 					},
+	// 				},
+	// 			},
+	// 		},
+	// 		wallet: {
+	// 			create: {},
+	// 		},
+	// 		role: 'ADMIN',
+	// 	},
+	// })
+
+	// // Reset User
+	// await database.user.delete({ where: { id: '091dae42-729d-4fbe-9bdd-f85aed64c66e' } })
 
 	const token = headers.Authorization || headers.authorization
 

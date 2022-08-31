@@ -18,8 +18,44 @@ extend type Mutation {
 }
 
 enum UserRole {
+	ADMIN
 	STUDENT
 	EDUCATOR
+}
+
+type Student {
+	id: ID!
+	level: Level!
+
+	# School
+	school: School
+	grade: Grade
+
+	# University
+	batch: String
+	university: University
+
+	# Shared
+	major: String
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Educator {
+	id: ID!
+	cprUrl: String
+	cvUrl: String
+	description: String
+	experience: String
+	active: Boolean
+
+	university: University
+	subjects: [Subject!]
+	classes: [Class!]
+
+	createdAt: Date!
+	updatedAt: Date!
 }
 
 type User {
@@ -31,6 +67,9 @@ type User {
 	mobile: String!
 	gender: Gender!
 	role: UserRole!
+	student: Student
+	educator: Educator
+	wallet: Wallet!
 
 	createdAt: Date!
 	updatedAt: Date!

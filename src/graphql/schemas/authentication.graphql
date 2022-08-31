@@ -28,12 +28,6 @@ input RefreshTokenInput {
 	token: String!
 }
 
-enum Level {
-	SCHOOL
-	UNIVERSITY
-	OTHER
-}
-
 input StudentRegistrationInput {
 	level: Level!
 	school: ID
