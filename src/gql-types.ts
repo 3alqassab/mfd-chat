@@ -30,6 +30,7 @@ export type AdminMessage = {
   createdAt: Scalars['Date'];
   email: Scalars['String'];
   id: Scalars['ID'];
+  isRead: Scalars['Boolean'];
   message: Scalars['String'];
   mobile: Scalars['String'];
   name: Scalars['String'];
@@ -811,6 +812,7 @@ export type AdminMessageResolvers<ContextType = Context, ParentType extends Reso
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isRead?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mobile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;

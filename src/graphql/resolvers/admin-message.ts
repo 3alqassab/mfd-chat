@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client'
 import { Resolvers } from '../../gql-types'
 import { validateEmail, validateMobile } from '../../functions/validate'
 
@@ -23,11 +24,22 @@ export default {
 	},
 
 	Mutation: {
-		async sendAdminMessage(_, { data }, { database, requireAuth }) {
+		async sendAdminMessage(
+			_,
+			{ data: { message, name, email, mobile } },
+			{ database, requireAuth },
+		) {
 			requireAuth()
 
-			validateEmail(data.email)
-			validateMobile(data.mobile)
+			validateEmail(email)
+			validateMobile(mobile)
+
+			const data: Prisma.MessageCreateInput = {
+				message: message.trim(),
+				name: name.trim(),
+				email: email.trim(),
+				mobile: mobile.trim(),
+			}
 
 			return await database.message.create({ data })
 		},

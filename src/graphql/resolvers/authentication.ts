@@ -20,10 +20,10 @@ const signJWT = (payload: Token) =>
 export default {
 	Query: {
 		async login(_, { data: { email, password } }, { database }) {
-			validateEmail(email)
+			validateEmail(email.trim())
 
 			const user = await database.user.findUnique({
-				where: { email: email.toLowerCase() },
+				where: { email: email.trim().toLowerCase() },
 			})
 
 			if (!user) throw ApolloError(ERRORS.NOT_FOUND)
@@ -38,10 +38,10 @@ export default {
 		},
 
 		async checkEmail(_, { data: { email } }, { database }) {
-			validateEmail(email)
+			validateEmail(email.trim())
 
 			const user = await database.user.findUnique({
-				where: { email: email.toLowerCase() },
+				where: { email: email.trim().toLowerCase() },
 			})
 
 			if (!user) return false
@@ -53,7 +53,18 @@ export default {
 	Mutation: {
 		async register(
 			_,
-			{ data: { password, student, educator, ...rest } },
+			{
+				data: {
+					password,
+					student,
+					educator,
+					email,
+					firstName,
+					gender,
+					lastName,
+					mobile,
+				},
+			},
 			{ database },
 		) {
 			if ((!student && !educator) || (student && educator))
@@ -63,8 +74,8 @@ export default {
 				)
 
 			validatePassword(password)
-			validateEmail(rest.email)
-			validateMobile(rest.mobile)
+			validateEmail(email.trim())
+			validateMobile(mobile.trim())
 
 			const user = await database.user.create({
 				data: {
@@ -73,7 +84,11 @@ export default {
 					wallet: { create: {} },
 					student: !student ? undefined : { create: student },
 					educator: !educator ? undefined : { create: educator },
-					...rest,
+					email: email.trim().toLowerCase(),
+					firstName: firstName.trim(),
+					lastName: lastName.trim(),
+					mobile: mobile.trim(),
+					gender,
 				},
 			})
 
@@ -84,10 +99,10 @@ export default {
 		},
 
 		async requestPasswordReset(_, { data: { email } }, { database }) {
-			validateEmail(email)
+			validateEmail(email.trim())
 
 			const user = await database.user.findUnique({
-				where: { email: email.toLowerCase() },
+				where: { email: email.trim().toLowerCase() },
 			})
 
 			if (!user) return true

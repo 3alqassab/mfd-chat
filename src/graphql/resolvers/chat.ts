@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient } from '@prisma/client'
 import { PubSub } from 'graphql-subscriptions'
 import { Resolvers } from '../../gql-types'
 
@@ -107,14 +107,14 @@ export default {
 		) {
 			requireAuth()
 
-			const message = await database.chatMessage.create({
-				data: {
-					chat: { connect: { id: chatId } },
-					content,
-					type,
-					sender: { connect: { id: user!.id } },
-				},
-			})
+			const data: Prisma.ChatMessageCreateInput = {
+				chat: { connect: { id: chatId } },
+				sender: { connect: { id: user!.id } },
+				content: type === 'TEXT' ? content.trim() : content,
+				type,
+			}
+
+			const message = await database.chatMessage.create({ data })
 
 			await updateChat(database, chatId)
 			await updateChats(database, user!.id)

@@ -123,51 +123,84 @@ export default {
 	Mutation: {
 		async createUser(
 			_,
-			{ data: { password, ...rest } },
+			{ data: { password, email, mobile, firstName, gender, lastName, role } },
 			{ database, requireAuth, isAdmin },
 		) {
 			requireAuth(isAdmin)
 
 			validatePassword(password)
-			validateEmail(rest.email)
-			validateMobile(rest.mobile)
+			validateEmail(email.trim())
+			validateMobile(mobile.trim())
 
 			const data: Prisma.UserCreateInput = {
 				password: Hash(password),
 				wallet: { create: {} },
-				...rest,
+				email: email.trim().toLowerCase(),
+				mobile: mobile.trim(),
+				firstName: firstName.trim(),
+				lastName: lastName.trim(),
+				gender,
+				role,
 			}
 
 			return await database.user.create({ data })
 		},
 
-		async updateMyUser(_, input, { database, requireAuth, user }) {
+		async updateMyUser(
+			_,
+			{ data: { email, mobile, firstName, gender, lastName } },
+			{ database, requireAuth, user },
+		) {
 			requireAuth()
 
-			if (input.data.mobile) validateMobile(input.data.mobile)
-			if (input.data.email) validateEmail(input.data.email)
+			const data: Prisma.UserUpdateInput = {}
+
+			if (mobile) {
+				validateMobile(mobile.trim())
+				data.mobile = mobile.trim()
+			}
+			if (email) {
+				validateEmail(email.trim())
+				data.email = email.trim().toLowerCase()
+			}
+			if (firstName) data.firstName = firstName.trim()
+			if (lastName) data.lastName = lastName.trim()
+			if (gender) data.gender = gender
 
 			return await database.user.update({
 				where: { id: user?.id },
-				...input,
+				data,
 			})
 		},
 
 		async updateUser(
 			_,
-			{ data: { password, ...rest }, where },
+			{
+				data: { password, email, mobile, firstName, gender, lastName, role },
+				where,
+			},
 			{ database, requireAuth, isAdmin },
 		) {
 			requireAuth(isAdmin)
 
-			const data: Prisma.UserUpdateInput = { ...rest }
+			const data: Prisma.UserUpdateInput = {}
+
+			if (mobile) {
+				validateMobile(mobile.trim())
+				data.mobile = mobile.trim()
+			}
+			if (email) {
+				validateEmail(email.trim())
+				data.email = email.trim().toLowerCase()
+			}
 			if (password) {
 				validatePassword(password)
-
 				data.password = Hash(password)
 			}
-			if (rest.mobile) validateMobile(rest.mobile)
-			if (rest.email) validateEmail(rest.email)
+			if (firstName) data.firstName = firstName.trim()
+			if (lastName) data.lastName = lastName.trim()
+			if (gender) data.gender = gender
+			if (role) data.role = role
 
 			return await database.user.update({ where, data })
 		},
