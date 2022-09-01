@@ -25,6 +25,40 @@ export type Scalars = {
   Upload: any;
 };
 
+export type AdminMessage = {
+  __typename?: 'AdminMessage';
+  createdAt: Scalars['Date'];
+  email: Scalars['String'];
+  id: Scalars['ID'];
+  message: Scalars['String'];
+  mobile: Scalars['String'];
+  name: Scalars['String'];
+  updatedAt: Scalars['Date'];
+};
+
+export type AdminMessageOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type AdminMessageSendInput = {
+  email: Scalars['String'];
+  message: Scalars['String'];
+  mobile: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type AdminMessageWhereInput = {
+  AND?: InputMaybe<Array<AdminMessageWhereInput>>;
+  NOT?: InputMaybe<Array<AdminMessageWhereInput>>;
+  OR?: InputMaybe<Array<AdminMessageWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type AdminMessageWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
 export type ArrayNullableFilter = {
   equals?: InputMaybe<Array<Scalars['String']>>;
   has?: InputMaybe<Scalars['String']>;
@@ -170,59 +204,30 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
-export type Message = {
-  __typename?: 'Message';
-  createdAt: Scalars['Date'];
-  email: Scalars['String'];
-  id: Scalars['ID'];
-  message: Scalars['String'];
-  mobile: Scalars['String'];
-  name: Scalars['String'];
-  updatedAt: Scalars['Date'];
-};
-
 export type MessageCreateInput = {
   chatId: Scalars['ID'];
   content: Scalars['Upload'];
   type: ChatMessageType;
 };
 
-export type MessageOrderByInput = {
-  createdAt?: InputMaybe<OrderDirection>;
-  id?: InputMaybe<OrderDirection>;
-};
-
-export type MessageSendInput = {
-  email: Scalars['String'];
-  message: Scalars['String'];
-  mobile: Scalars['String'];
-  name: Scalars['String'];
-};
-
-export type MessageWhereInput = {
-  AND?: InputMaybe<Array<MessageWhereInput>>;
-  NOT?: InputMaybe<Array<MessageWhereInput>>;
-  OR?: InputMaybe<Array<MessageWhereInput>>;
-  id?: InputMaybe<IdFilter>;
-};
-
-export type MessageWhereUniqueInput = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
+  adminMessageToggleIsRead?: Maybe<AdminMessage>;
   createUser?: Maybe<User>;
-  deleteMessage?: Maybe<Message>;
+  deleteAdminMessage?: Maybe<AdminMessage>;
   deleteUser?: Maybe<User>;
   register?: Maybe<Authentication>;
   requestPasswordReset?: Maybe<Scalars['Boolean']>;
   resetPassword?: Maybe<Authentication>;
-  sendMessage?: Maybe<Message>;
+  sendAdminMessage?: Maybe<AdminMessage>;
   sendMessageToChat: ChatMessage;
-  toggleIsRead?: Maybe<Message>;
   updateMyUser?: Maybe<User>;
   updateUser?: Maybe<User>;
+};
+
+
+export type MutationAdminMessageToggleIsReadArgs = {
+  where: AdminMessageWhereUniqueInput;
 };
 
 
@@ -231,8 +236,8 @@ export type MutationCreateUserArgs = {
 };
 
 
-export type MutationDeleteMessageArgs = {
-  where: MessageWhereUniqueInput;
+export type MutationDeleteAdminMessageArgs = {
+  where: AdminMessageWhereUniqueInput;
 };
 
 
@@ -256,18 +261,13 @@ export type MutationResetPasswordArgs = {
 };
 
 
-export type MutationSendMessageArgs = {
-  data: MessageSendInput;
+export type MutationSendAdminMessageArgs = {
+  data: AdminMessageSendInput;
 };
 
 
 export type MutationSendMessageToChatArgs = {
   data: MessageCreateInput;
-};
-
-
-export type MutationToggleIsReadArgs = {
-  where: MessageWhereUniqueInput;
 };
 
 
@@ -335,17 +335,35 @@ export type PurchaseType =
 
 export type Query = {
   __typename?: 'Query';
+  adminMessage?: Maybe<AdminMessage>;
+  adminMessages: Array<AdminMessage>;
+  adminMessagesCount?: Maybe<Scalars['Int']>;
   chats: Array<Chat>;
   chatsCount?: Maybe<Scalars['Int']>;
   checkEmail?: Maybe<Scalars['Boolean']>;
   login?: Maybe<Authentication>;
-  message?: Maybe<Message>;
-  messages: Array<Message>;
-  messagesCount?: Maybe<Scalars['Int']>;
   myUser?: Maybe<User>;
   user?: Maybe<User>;
   users: Array<User>;
   usersCount?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryAdminMessageArgs = {
+  where: AdminMessageWhereUniqueInput;
+};
+
+
+export type QueryAdminMessagesArgs = {
+  orderBy?: InputMaybe<Array<AdminMessageOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<AdminMessageWhereInput>;
+};
+
+
+export type QueryAdminMessagesCountArgs = {
+  where?: InputMaybe<AdminMessageWhereInput>;
 };
 
 
@@ -369,24 +387,6 @@ export type QueryCheckEmailArgs = {
 
 export type QueryLoginArgs = {
   data: LoginInput;
-};
-
-
-export type QueryMessageArgs = {
-  where: MessageWhereUniqueInput;
-};
-
-
-export type QueryMessagesArgs = {
-  orderBy?: InputMaybe<Array<MessageOrderByInput>>;
-  skip?: InputMaybe<Scalars['Int']>;
-  take?: InputMaybe<Scalars['Int']>;
-  where?: InputMaybe<MessageWhereInput>;
-};
-
-
-export type QueryMessagesCountArgs = {
-  where?: InputMaybe<MessageWhereInput>;
 };
 
 
@@ -681,6 +681,11 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  AdminMessage: ResolverTypeWrapper<AdminMessage>;
+  AdminMessageOrderByInput: AdminMessageOrderByInput;
+  AdminMessageSendInput: AdminMessageSendInput;
+  AdminMessageWhereInput: AdminMessageWhereInput;
+  AdminMessageWhereUniqueInput: AdminMessageWhereUniqueInput;
   ArrayNullableFilter: ArrayNullableFilter;
   Authentication: ResolverTypeWrapper<Omit<Authentication, 'user'> & { user: ResolversTypes['User'] }>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
@@ -703,12 +708,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Level: Level;
   LoginInput: LoginInput;
-  Message: ResolverTypeWrapper<MessageModel>;
   MessageCreateInput: MessageCreateInput;
-  MessageOrderByInput: MessageOrderByInput;
-  MessageSendInput: MessageSendInput;
-  MessageWhereInput: MessageWhereInput;
-  MessageWhereUniqueInput: MessageWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
@@ -749,6 +749,11 @@ export type ResolversTypes = {
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  AdminMessage: AdminMessage;
+  AdminMessageOrderByInput: AdminMessageOrderByInput;
+  AdminMessageSendInput: AdminMessageSendInput;
+  AdminMessageWhereInput: AdminMessageWhereInput;
+  AdminMessageWhereUniqueInput: AdminMessageWhereUniqueInput;
   ArrayNullableFilter: ArrayNullableFilter;
   Authentication: Omit<Authentication, 'user'> & { user: ResolversParentTypes['User'] };
   Boolean: Scalars['Boolean'];
@@ -768,12 +773,7 @@ export type ResolversParentTypes = {
   IDFilter: IdFilter;
   Int: Scalars['Int'];
   LoginInput: LoginInput;
-  Message: MessageModel;
   MessageCreateInput: MessageCreateInput;
-  MessageOrderByInput: MessageOrderByInput;
-  MessageSendInput: MessageSendInput;
-  MessageWhereInput: MessageWhereInput;
-  MessageWhereUniqueInput: MessageWhereUniqueInput;
   Mutation: {};
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
@@ -805,6 +805,17 @@ export type ResolversParentTypes = {
   UserWhereInput: UserWhereInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Wallet: WalletModel;
+};
+
+export type AdminMessageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['AdminMessage'] = ResolversParentTypes['AdminMessage']> = {
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mobile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type AuthenticationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Authentication'] = ResolversParentTypes['Authentication']> = {
@@ -882,27 +893,16 @@ export type GradeResolvers<ContextType = Context, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type MessageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
-  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  mobile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  adminMessageToggleIsRead?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<MutationAdminMessageToggleIsReadArgs, 'where'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'data'>>;
-  deleteMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationDeleteMessageArgs, 'where'>>;
+  deleteAdminMessage?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<MutationDeleteAdminMessageArgs, 'where'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'where'>>;
   register?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
   requestPasswordReset?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRequestPasswordResetArgs, 'data'>>;
   resetPassword?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'data'>>;
-  sendMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'data'>>;
+  sendAdminMessage?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<MutationSendAdminMessageArgs, 'data'>>;
   sendMessageToChat?: Resolver<ResolversTypes['ChatMessage'], ParentType, ContextType, RequireFields<MutationSendMessageToChatArgs, 'data'>>;
-  toggleIsRead?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationToggleIsReadArgs, 'where'>>;
   updateMyUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateMyUserArgs, 'data'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data' | 'where'>>;
 };
@@ -942,13 +942,13 @@ export type PurchaseResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  adminMessage?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<QueryAdminMessageArgs, 'where'>>;
+  adminMessages?: Resolver<Array<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<QueryAdminMessagesArgs, 'skip' | 'take' | 'where'>>;
+  adminMessagesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryAdminMessagesCountArgs, 'where'>>;
   chats?: Resolver<Array<ResolversTypes['Chat']>, ParentType, ContextType, RequireFields<QueryChatsArgs, 'skip' | 'take' | 'where'>>;
   chatsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryChatsCountArgs, 'where'>>;
   checkEmail?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<QueryCheckEmailArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'data'>>;
-  message?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryMessageArgs, 'where'>>;
-  messages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryMessagesArgs, 'skip' | 'take' | 'where'>>;
-  messagesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryMessagesCountArgs, 'where'>>;
   myUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'skip' | 'take' | 'where'>>;
@@ -1044,6 +1044,7 @@ export type WalletResolvers<ContextType = Context, ParentType extends ResolversP
 };
 
 export type Resolvers<ContextType = Context> = {
+  AdminMessage?: AdminMessageResolvers<ContextType>;
   Authentication?: AuthenticationResolvers<ContextType>;
   Chat?: ChatResolvers<ContextType>;
   ChatMessage?: ChatMessageResolvers<ContextType>;
@@ -1051,7 +1052,6 @@ export type Resolvers<ContextType = Context> = {
   Date?: GraphQLScalarType;
   Educator?: EducatorResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
-  Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Null?: GraphQLScalarType;
   NullableID?: GraphQLScalarType;

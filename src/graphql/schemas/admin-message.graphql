@@ -1,0 +1,52 @@
+extend type Query {
+	adminMessage(where: AdminMessageWhereUniqueInput!): AdminMessage
+	adminMessages(
+		where: AdminMessageWhereInput = {}
+		orderBy: [AdminMessageOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [AdminMessage!]!
+	adminMessagesCount(where: AdminMessageWhereInput = {}): Int
+}
+
+extend type Mutation {
+	sendAdminMessage(data: AdminMessageSendInput!): AdminMessage
+	adminMessageToggleIsRead(where: AdminMessageWhereUniqueInput!): AdminMessage
+	deleteAdminMessage(where: AdminMessageWhereUniqueInput!): AdminMessage
+}
+
+type AdminMessage {
+	id: ID!
+
+	name: String!
+	email: String!
+	message: String!
+	mobile: String!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input AdminMessageWhereUniqueInput {
+	id: ID
+}
+
+input AdminMessageWhereInput {
+	AND: [AdminMessageWhereInput!]
+	OR: [AdminMessageWhereInput!]
+	NOT: [AdminMessageWhereInput!]
+	id: IDFilter
+}
+
+input AdminMessageSendInput {
+	name: String!
+	email: String!
+	message: String!
+	mobile: String!
+}
+
+input AdminMessageOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}
