@@ -8142,6 +8142,11 @@ validate-npm-package-name@^3.0.0:
   dependencies:
     builtins "^1.0.3"
 
+validate-phone-number-node-js@^0.0.1:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/validate-phone-number-node-js/-/validate-phone-number-node-js-0.0.1.tgz#88ce5f7ee2ad53a1f469052a73b2e2ded77ec634"
+  integrity sha512-A9yVgLOYLyLhGKPFOxGsar9jQK/Ti4TKvEUrklQ26KWRxcV6xw9EzBBD9dCX6S+SeczxCuQgO1u3I/ne2tABYw==
+
 value-or-promise@1.0.11, value-or-promise@^1.0.11:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/value-or-promise/-/value-or-promise-1.0.11.tgz#3e90299af31dd014fe843fe309cefa7c1d94b140"

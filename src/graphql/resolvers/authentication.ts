@@ -1,6 +1,10 @@
 import { Resolvers } from '../../gql-types'
 import { Token } from '../../context'
-import { validateEmail, validatePassword } from '../../functions/validate'
+import {
+	validateEmail,
+	validateMobile,
+	validatePassword,
+} from '../../functions/validate'
 import dayjs from 'dayjs'
 import ERRORS, { ApolloError } from '../../functions/errors'
 import Hash from '../../functions/hash'
@@ -49,7 +53,7 @@ export default {
 	Mutation: {
 		async register(
 			_,
-			{ data: { email, password, student, educator, ...rest } },
+			{ data: { password, student, educator, ...rest } },
 			{ database },
 		) {
 			if ((!student && !educator) || (student && educator))
@@ -59,17 +63,17 @@ export default {
 				)
 
 			validatePassword(password)
-			validateEmail(email)
+			validateEmail(rest.email)
+			validateMobile(rest.mobile)
 
 			const user = await database.user.create({
 				data: {
-					email,
 					password: Hash(password),
 					role: student ? 'STUDENT' : 'EDUCATOR',
-					...rest,
 					wallet: { create: {} },
 					student: !student ? undefined : { create: student },
 					educator: !educator ? undefined : { create: educator },
+					...rest,
 				},
 			})
 

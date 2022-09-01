@@ -1,6 +1,10 @@
 import { Prisma } from '@prisma/client'
 import { Resolvers } from '../../gql-types'
-import { validateEmail, validatePassword } from '../../functions/validate'
+import {
+	validateEmail,
+	validateMobile,
+	validatePassword,
+} from '../../functions/validate'
 import Hash from '../../functions/hash'
 
 export default {
@@ -115,17 +119,17 @@ export default {
 	Mutation: {
 		async createUser(
 			_,
-			{ data: { password, email, ...rest } },
+			{ data: { password, ...rest } },
 			{ database, requireAuth, isAdmin },
 		) {
 			requireAuth(isAdmin)
 
 			validatePassword(password)
-			validateEmail(email)
+			validateEmail(rest.email)
+			validateMobile(rest.mobile)
 
 			const data: Prisma.UserCreateInput = {
 				password: Hash(password),
-				email,
 				wallet: {
 					create: {},
 				},
@@ -138,6 +142,9 @@ export default {
 		async updateMyUser(_, input, { database, requireAuth, user }) {
 			requireAuth()
 
+			if (input.data.mobile) validateMobile(input.data.mobile)
+			if (input.data.email) validateEmail(input.data.email)
+
 			return await database.user.update({
 				where: { id: user?.id },
 				...input,
@@ -146,7 +153,7 @@ export default {
 
 		async updateUser(
 			_,
-			{ data: { password, email, ...rest }, where },
+			{ data: { password, ...rest }, where },
 			{ database, requireAuth, isAdmin },
 		) {
 			requireAuth(isAdmin)
@@ -157,10 +164,8 @@ export default {
 
 				data.password = Hash(password)
 			}
-			if (email) {
-				validateEmail(email)
-				data.email = email
-			}
+			if (rest.mobile) validateMobile(rest.mobile)
+			if (rest.email) validateEmail(rest.email)
 
 			return await database.user.update({ where, data })
 		},

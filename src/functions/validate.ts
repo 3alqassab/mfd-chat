@@ -1,5 +1,8 @@
 import { validate as emailValidation } from 'email-validator'
 import ERRORS, { ApolloError } from './errors'
+const validatePhoneNumberNodeJs = require('validate-phone-number-node-js') as {
+	validate: (phoneNumber: string) => boolean
+}
 
 export const validatePassword = (password: string) => {
 	let valid = true
@@ -24,7 +27,14 @@ export const validateEmail = (email: string) => {
 	if (!emailValidation(email))
 		throw ApolloError(
 			ERRORS.MALFORMED_INPUT,
-
 			'Please provide a valid email address',
+		)
+}
+
+export const validateMobile = (mobile: string) => {
+	if (!validatePhoneNumberNodeJs.validate(mobile))
+		throw ApolloError(
+			ERRORS.MALFORMED_INPUT,
+			'Please provide a valid mobile number (e.g. +97333123456)',
 		)
 }

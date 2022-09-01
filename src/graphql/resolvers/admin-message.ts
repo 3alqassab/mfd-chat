@@ -1,4 +1,5 @@
 import { Resolvers } from '../../gql-types'
+import { validateEmail, validateMobile } from '../../functions/validate'
 
 export default {
 	Query: {
@@ -24,6 +25,9 @@ export default {
 	Mutation: {
 		async sendAdminMessage(_, { data }, { database, requireAuth }) {
 			requireAuth()
+
+			validateEmail(data.email)
+			validateMobile(data.mobile)
 
 			return await database.message.create({ data })
 		},
