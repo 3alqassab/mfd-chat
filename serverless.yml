@@ -62,3 +62,4 @@ custom:
 package:
   patterns:
     - '!src/graphql.ts'
+    - '!scripts/**'
