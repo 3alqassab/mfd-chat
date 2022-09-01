@@ -38,6 +38,9 @@ input AdminMessageWhereInput {
 	NOT: [AdminMessageWhereInput!]
 	id: IDFilter
 	isRead: Boolean
+	name: StringNullableFilter
+	email: StringNullableFilter
+	mobile: StringNullableFilter
 }
 
 input AdminMessageSendInput {

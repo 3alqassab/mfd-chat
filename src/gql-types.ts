@@ -54,8 +54,11 @@ export type AdminMessageWhereInput = {
   AND?: InputMaybe<Array<AdminMessageWhereInput>>;
   NOT?: InputMaybe<Array<AdminMessageWhereInput>>;
   OR?: InputMaybe<Array<AdminMessageWhereInput>>;
+  email?: InputMaybe<StringNullableFilter>;
   id?: InputMaybe<IdFilter>;
   isRead?: InputMaybe<Scalars['Boolean']>;
+  mobile?: InputMaybe<StringNullableFilter>;
+  name?: InputMaybe<StringNullableFilter>;
 };
 
 export type AdminMessageWhereUniqueInput = {
