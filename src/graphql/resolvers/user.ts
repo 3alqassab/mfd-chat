@@ -15,6 +15,7 @@ export default {
 			})
 		},
 	},
+
 	Student: {
 		async university({ universityId }, __, { database }) {
 			if (!universityId) return null
@@ -40,6 +41,7 @@ export default {
 			})
 		},
 	},
+
 	Educator: {
 		async university({ universityId }, __, { database }) {
 			if (!universityId) return null
@@ -67,6 +69,7 @@ export default {
 			return cprUrl
 		},
 	},
+
 	User: {
 		async educator({ id }, __, { database }) {
 			return await database.educator.findUnique({ where: { userId: id } })
@@ -90,6 +93,7 @@ export default {
 			})
 		},
 	},
+
 	Query: {
 		async myUser(_, __, { database, requireAuth, user }) {
 			requireAuth()
@@ -130,9 +134,7 @@ export default {
 
 			const data: Prisma.UserCreateInput = {
 				password: Hash(password),
-				wallet: {
-					create: {},
-				},
+				wallet: { create: {} },
 				...rest,
 			}
 

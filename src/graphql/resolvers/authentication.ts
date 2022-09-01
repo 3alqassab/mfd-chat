@@ -97,10 +97,7 @@ export default {
 			// TODO: EMAIL TOKEN TO USER
 
 			await database.token.create({
-				data: {
-					token,
-					opertation: 'RESET_PASSWORD',
-				},
+				data: { token, opertation: 'RESET_PASSWORD' },
 			})
 
 			return true

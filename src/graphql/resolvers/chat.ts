@@ -85,6 +85,7 @@ export default {
 				},
 			}),
 		},
+
 		chats: {
 			subscribe: (_, __, { requireAuth, user, database }) => ({
 				[Symbol.asyncIterator]: () => {
