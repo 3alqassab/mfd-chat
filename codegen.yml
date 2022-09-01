@@ -1,9 +1,11 @@
 overwrite: true
 schema: 'src/graphql/schemas/**/*.graphql'
-documents: null
+documents: 'src/graphql/documents/**/*.graphql'
+watch: true
 generates:
   ./src/gql-types.ts:
     config:
+      withHooks: true
       scalars:
         Null: null | undefined
         NullableString: null | string
@@ -36,6 +38,10 @@ generates:
         Post: '@prisma/client#Post'
         ContactUs: '@prisma/client#ContactUs'
         Token: '@prisma/client#Token'
+        Chat: '@prisma/client#Chat'
+        ChatMessage: '@prisma/client#ChatMessage'
     plugins:
       - 'typescript'
       - 'typescript-resolvers'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'

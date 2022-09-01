@@ -5,9 +5,21 @@ import ContextSetup from './context'
 import express from 'express'
 import schema from './graphql/mappers/schema'
 
+type HeadersType = {
+	Authorization?: string
+	authorization?: string
+}
+
 const server = new ApolloServer({
 	schema,
-	context: async ({ event }) => await ContextSetup(event),
+	context: async ({ event }) => {
+		const headers = event.headers as HeadersType
+
+		return await ContextSetup({
+			ip: event.requestContext.identity.sourceIp,
+			token: headers.Authorization || headers.authorization,
+		})
+	},
 })
 
 export const graphqlHandler = server.createHandler({

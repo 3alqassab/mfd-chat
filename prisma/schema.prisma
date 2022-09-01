@@ -43,7 +43,9 @@ model User {
 
   wallet Wallet?
 
-  classes Class[]
+  classes      Class[]
+  chats        Chat[]
+  chatMessages ChatMessage[]
 }
 
 model Connection {
@@ -430,6 +432,37 @@ model ContactUs {
   mobile  String
   email   String
   message String
+}
+
+enum ChatMessageType {
+  TEXT
+  MEDIA
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  type    ChatMessageType @default(TEXT)
+  content String
+
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  senderId String
+
+  chat   Chat   @relation(fields: [chatId], references: [id])
+  chatId String
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name     String?
+  isGroup  Boolean       @default(false)
+  members  User[]
+  messages ChatMessage[]
 }
 
 enum TokenOperation {

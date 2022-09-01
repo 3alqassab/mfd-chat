@@ -1,0 +1,70 @@
+extend type Query {
+	chats(
+		where: ChatWhereInput = {}
+		orderBy: [ChatOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Chat!]!
+	chatsCount(where: ChatWhereInput = {}): Int
+}
+
+extend type Subscription {
+	chats: [Chat!]!
+	chat(where: ChatWhereUniqueInput!): Chat!
+}
+
+extend type Mutation {
+	sendMessageToChat(data: MessageCreateInput!): ChatMessage!
+}
+
+enum ChatMessageType {
+	TEXT
+	MEDIA
+}
+
+type ChatMessage {
+	id: ID!
+
+	type: ChatMessageType!
+	content: String!
+	sender: User
+	chat: Chat!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Chat {
+	id: ID!
+
+	name: String
+	isGroup: Boolean!
+	members: [User!]!
+	messages(where: ChatWhereInput = {}, take: Int = 1, skip: Int = 0): [ChatMessage!]!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input ChatWhereUniqueInput {
+	id: ID!
+}
+
+input ChatWhereInput {
+	AND: [ChatWhereInput!]
+	OR: [ChatWhereInput!]
+	NOT: [ChatWhereInput!]
+	id: IDFilter
+}
+
+input MessageCreateInput {
+	type: ChatMessageType!
+	content: Upload!
+	chat: ID!
+}
+
+input ChatOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

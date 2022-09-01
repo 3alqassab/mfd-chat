@@ -1,5 +1,6 @@
 import 'graphql-import-node'
 import * as authenticationTypeDefs from '../schemas/authentication.graphql'
+import * as chatTypeDefs from '../schemas/chat.graphql'
 import * as defaulTypeDefs from '../schemas/default.graphql'
 import * as sharedypeDefs from '../schemas/shared.graphql'
 import * as userTypeDefs from '../schemas/user.graphql'
@@ -13,6 +14,7 @@ const schema: GraphQLSchema = makeExecutableSchema({
 		sharedypeDefs,
 		authenticationTypeDefs,
 		userTypeDefs,
+		chatTypeDefs,
 	],
 	resolvers,
 })

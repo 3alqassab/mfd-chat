@@ -1,0 +1,18 @@
+mutation RequestPasswordReset($data: RequestPasswordResetInput!) {
+	requestPasswordReset(data: $data)
+}
+
+mutation ResetPassword($data: ResetPasswordInput!) {
+	resetPassword(data: $data) {
+		token
+	}
+}
+mutation Register($data: RegistrationInput!) {
+	register(data: $data) {
+		user {
+			id
+			role
+		}
+		token
+	}
+}

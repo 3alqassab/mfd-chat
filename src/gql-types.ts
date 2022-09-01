@@ -1,6 +1,8 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { User as UserModel, Connection as ConnectionModel, Notification as NotificationModel, Wallet as WalletModel, Purchase as PurchaseModel, Grade as GradeModel, School as SchoolModel, University as UniversityModel, Student as StudentModel, Educator as EducatorModel, Organization as OrganizationModel, Subject as SubjectModel, ClassQuestion as ClassQuestionModel, ClassAnswer as ClassAnswerModel, ClassResource as ClassResourceModel, ClassChapterContent as ClassChapterContentModel, ClassChapter as ClassChapterModel, Class as ClassModel, Ad as AdModel, PostComment as PostCommentModel, Post as PostModel, ContactUs as ContactUsModel, Token as TokenModel } from '@prisma/client';
+import { User as UserModel, Connection as ConnectionModel, Notification as NotificationModel, Wallet as WalletModel, Purchase as PurchaseModel, Grade as GradeModel, School as SchoolModel, University as UniversityModel, Student as StudentModel, Educator as EducatorModel, Organization as OrganizationModel, Subject as SubjectModel, ClassQuestion as ClassQuestionModel, ClassAnswer as ClassAnswerModel, ClassResource as ClassResourceModel, ClassChapterContent as ClassChapterContentModel, ClassChapter as ClassChapterModel, Class as ClassModel, Ad as AdModel, PostComment as PostCommentModel, Post as PostModel, ContactUs as ContactUsModel, Token as TokenModel, Chat as ChatModel, ChatMessage as ChatMessageModel } from '@prisma/client';
 import { Context } from './context';
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = T | undefined;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -8,6 +10,7 @@ export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: 
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -34,6 +37,55 @@ export type Authentication = {
   __typename?: 'Authentication';
   token?: Maybe<Scalars['String']>;
   user: User;
+};
+
+export type Chat = {
+  __typename?: 'Chat';
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  isGroup: Scalars['Boolean'];
+  members: Array<User>;
+  messages: Array<ChatMessage>;
+  name?: Maybe<Scalars['String']>;
+  updatedAt: Scalars['Date'];
+};
+
+
+export type ChatMessagesArgs = {
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ChatWhereInput>;
+};
+
+export type ChatMessage = {
+  __typename?: 'ChatMessage';
+  chat: Chat;
+  content: Scalars['String'];
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  sender?: Maybe<User>;
+  type: ChatMessageType;
+  updatedAt: Scalars['Date'];
+};
+
+export type ChatMessageType =
+  | 'MEDIA'
+  | 'TEXT';
+
+export type ChatOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type ChatWhereInput = {
+  AND?: InputMaybe<Array<ChatWhereInput>>;
+  NOT?: InputMaybe<Array<ChatWhereInput>>;
+  OR?: InputMaybe<Array<ChatWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type ChatWhereUniqueInput = {
+  id: Scalars['ID'];
 };
 
 export type CheckEmailInput = {
@@ -118,6 +170,12 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
+export type MessageCreateInput = {
+  chat: Scalars['ID'];
+  content: Scalars['Upload'];
+  type: ChatMessageType;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
@@ -126,6 +184,7 @@ export type Mutation = {
   register?: Maybe<Authentication>;
   requestPasswordReset?: Maybe<Scalars['Boolean']>;
   resetPassword?: Maybe<Authentication>;
+  sendMessageToChat: ChatMessage;
   updateMyUser?: Maybe<User>;
   updateUser?: Maybe<User>;
 };
@@ -153,6 +212,11 @@ export type MutationRequestPasswordResetArgs = {
 
 export type MutationResetPasswordArgs = {
   data: ResetPasswordInput;
+};
+
+
+export type MutationSendMessageToChatArgs = {
+  data: MessageCreateInput;
 };
 
 
@@ -221,6 +285,8 @@ export type PurchaseType =
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  chats: Array<Chat>;
+  chatsCount?: Maybe<Scalars['Int']>;
   checkEmail?: Maybe<Scalars['Boolean']>;
   login?: Maybe<Authentication>;
   myUser?: Maybe<User>;
@@ -228,6 +294,19 @@ export type Query = {
   user?: Maybe<User>;
   users: Array<User>;
   usersCount?: Maybe<Scalars['Int']>;
+};
+
+
+export type QueryChatsArgs = {
+  orderBy?: InputMaybe<Array<ChatOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ChatWhereInput>;
+};
+
+
+export type QueryChatsCountArgs = {
+  where?: InputMaybe<ChatWhereInput>;
 };
 
 
@@ -363,6 +442,18 @@ export type Subject = {
 export type SubjectLevel =
   | 'SCHOOl'
   | 'UNIVERSITY';
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  _empty?: Maybe<Scalars['String']>;
+  chat: Chat;
+  chats: Array<Chat>;
+};
+
+
+export type SubscriptionChatArgs = {
+  where: ChatWhereUniqueInput;
+};
 
 export type University = {
   __typename?: 'University';
@@ -529,6 +620,12 @@ export type ResolversTypes = {
   ArrayNullableFilter: ArrayNullableFilter;
   Authentication: ResolverTypeWrapper<Omit<Authentication, 'user'> & { user: ResolversTypes['User'] }>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Chat: ResolverTypeWrapper<ChatModel>;
+  ChatMessage: ResolverTypeWrapper<ChatMessageModel>;
+  ChatMessageType: ChatMessageType;
+  ChatOrderByInput: ChatOrderByInput;
+  ChatWhereInput: ChatWhereInput;
+  ChatWhereUniqueInput: ChatWhereUniqueInput;
   CheckEmailInput: CheckEmailInput;
   Class: ResolverTypeWrapper<ClassModel>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
@@ -542,6 +639,7 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Level: Level;
   LoginInput: LoginInput;
+  MessageCreateInput: MessageCreateInput;
   Mutation: ResolverTypeWrapper<{}>;
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
@@ -566,6 +664,7 @@ export type ResolversTypes = {
   StudentRegistrationInput: StudentRegistrationInput;
   Subject: ResolverTypeWrapper<SubjectModel>;
   SubjectLevel: SubjectLevel;
+  Subscription: ResolverTypeWrapper<{}>;
   University: ResolverTypeWrapper<UniversityModel>;
   Upload: ResolverTypeWrapper<Scalars['Upload']>;
   User: ResolverTypeWrapper<UserModel>;
@@ -584,6 +683,11 @@ export type ResolversParentTypes = {
   ArrayNullableFilter: ArrayNullableFilter;
   Authentication: Omit<Authentication, 'user'> & { user: ResolversParentTypes['User'] };
   Boolean: Scalars['Boolean'];
+  Chat: ChatModel;
+  ChatMessage: ChatMessageModel;
+  ChatOrderByInput: ChatOrderByInput;
+  ChatWhereInput: ChatWhereInput;
+  ChatWhereUniqueInput: ChatWhereUniqueInput;
   CheckEmailInput: CheckEmailInput;
   Class: ClassModel;
   Date: Scalars['Date'];
@@ -595,6 +699,7 @@ export type ResolversParentTypes = {
   IDFilter: IdFilter;
   Int: Scalars['Int'];
   LoginInput: LoginInput;
+  MessageCreateInput: MessageCreateInput;
   Mutation: {};
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
@@ -615,6 +720,7 @@ export type ResolversParentTypes = {
   Student: StudentModel;
   StudentRegistrationInput: StudentRegistrationInput;
   Subject: SubjectModel;
+  Subscription: {};
   University: UniversityModel;
   Upload: Scalars['Upload'];
   User: UserModel;
@@ -630,6 +736,28 @@ export type ResolversParentTypes = {
 export type AuthenticationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Authentication'] = ResolversParentTypes['Authentication']> = {
   token?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChatResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Chat'] = ResolversParentTypes['Chat']> = {
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isGroup?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  members?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType>;
+  messages?: Resolver<Array<ResolversTypes['ChatMessage']>, ParentType, ContextType, RequireFields<ChatMessagesArgs, 'skip' | 'take' | 'where'>>;
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ChatMessageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ChatMessage'] = ResolversParentTypes['ChatMessage']> = {
+  chat?: Resolver<ResolversTypes['Chat'], ParentType, ContextType>;
+  content?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  sender?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  type?: Resolver<ResolversTypes['ChatMessageType'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -687,6 +815,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   register?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
   requestPasswordReset?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRequestPasswordResetArgs, 'data'>>;
   resetPassword?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'data'>>;
+  sendMessageToChat?: Resolver<ResolversTypes['ChatMessage'], ParentType, ContextType, RequireFields<MutationSendMessageToChatArgs, 'data'>>;
   updateMyUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateMyUserArgs, 'data'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data' | 'where'>>;
 };
@@ -727,6 +856,8 @@ export type PurchaseResolvers<ContextType = Context, ParentType extends Resolver
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  chats?: Resolver<Array<ResolversTypes['Chat']>, ParentType, ContextType, RequireFields<QueryChatsArgs, 'skip' | 'take' | 'where'>>;
+  chatsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryChatsCountArgs, 'where'>>;
   checkEmail?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<QueryCheckEmailArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'data'>>;
   myUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
@@ -776,6 +907,12 @@ export type SubjectResolvers<ContextType = Context, ParentType extends Resolvers
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
+  _empty?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "_empty", ParentType, ContextType>;
+  chat?: SubscriptionResolver<ResolversTypes['Chat'], "chat", ParentType, ContextType, RequireFields<SubscriptionChatArgs, 'where'>>;
+  chats?: SubscriptionResolver<Array<ResolversTypes['Chat']>, "chats", ParentType, ContextType>;
+};
+
 export type UniversityResolvers<ContextType = Context, ParentType extends ResolversParentTypes['University'] = ResolversParentTypes['University']> = {
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   educators?: Resolver<Maybe<Array<ResolversTypes['Educator']>>, ParentType, ContextType>;
@@ -821,6 +958,8 @@ export type WalletResolvers<ContextType = Context, ParentType extends ResolversP
 
 export type Resolvers<ContextType = Context> = {
   Authentication?: AuthenticationResolvers<ContextType>;
+  Chat?: ChatResolvers<ContextType>;
+  ChatMessage?: ChatMessageResolvers<ContextType>;
   Class?: ClassResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Educator?: EducatorResolvers<ContextType>;
@@ -835,9 +974,180 @@ export type Resolvers<ContextType = Context> = {
   School?: SchoolResolvers<ContextType>;
   Student?: StudentResolvers<ContextType>;
   Subject?: SubjectResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   University?: UniversityResolvers<ContextType>;
   Upload?: GraphQLScalarType;
   User?: UserResolvers<ContextType>;
   Wallet?: WalletResolvers<ContextType>;
 };
 
+
+export type RequestPasswordResetMutationVariables = Exact<{
+  data: RequestPasswordResetInput;
+}>;
+
+
+export type RequestPasswordResetMutation = { __typename?: 'Mutation', requestPasswordReset?: boolean | null };
+
+export type ResetPasswordMutationVariables = Exact<{
+  data: ResetPasswordInput;
+}>;
+
+
+export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword?: { __typename?: 'Authentication', token?: string | null } | null };
+
+export type RegisterMutationVariables = Exact<{
+  data: RegistrationInput;
+}>;
+
+
+export type RegisterMutation = { __typename?: 'Mutation', register?: { __typename?: 'Authentication', token?: string | null, user: { __typename?: 'User', id: string, role: UserRole } } | null };
+
+export type LoginQueryVariables = Exact<{
+  data: LoginInput;
+}>;
+
+
+export type LoginQuery = { __typename?: 'Query', login?: { __typename?: 'Authentication', token?: string | null, user: { __typename?: 'User', id: string, role: UserRole } } | null };
+
+
+export const RequestPasswordResetDocument = gql`
+    mutation RequestPasswordReset($data: RequestPasswordResetInput!) {
+  requestPasswordReset(data: $data)
+}
+    `;
+export type RequestPasswordResetMutationFn = Apollo.MutationFunction<RequestPasswordResetMutation, RequestPasswordResetMutationVariables>;
+
+/**
+ * __useRequestPasswordResetMutation__
+ *
+ * To run a mutation, you first call `useRequestPasswordResetMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRequestPasswordResetMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [requestPasswordResetMutation, { data, loading, error }] = useRequestPasswordResetMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useRequestPasswordResetMutation(baseOptions?: Apollo.MutationHookOptions<RequestPasswordResetMutation, RequestPasswordResetMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RequestPasswordResetMutation, RequestPasswordResetMutationVariables>(RequestPasswordResetDocument, options);
+      }
+export type RequestPasswordResetMutationHookResult = ReturnType<typeof useRequestPasswordResetMutation>;
+export type RequestPasswordResetMutationResult = Apollo.MutationResult<RequestPasswordResetMutation>;
+export type RequestPasswordResetMutationOptions = Apollo.BaseMutationOptions<RequestPasswordResetMutation, RequestPasswordResetMutationVariables>;
+export const ResetPasswordDocument = gql`
+    mutation ResetPassword($data: ResetPasswordInput!) {
+  resetPassword(data: $data) {
+    token
+  }
+}
+    `;
+export type ResetPasswordMutationFn = Apollo.MutationFunction<ResetPasswordMutation, ResetPasswordMutationVariables>;
+
+/**
+ * __useResetPasswordMutation__
+ *
+ * To run a mutation, you first call `useResetPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useResetPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [resetPasswordMutation, { data, loading, error }] = useResetPasswordMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useResetPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ResetPasswordMutation, ResetPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ResetPasswordMutation, ResetPasswordMutationVariables>(ResetPasswordDocument, options);
+      }
+export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPasswordMutation>;
+export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
+export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
+export const RegisterDocument = gql`
+    mutation Register($data: RegistrationInput!) {
+  register(data: $data) {
+    user {
+      id
+      role
+    }
+    token
+  }
+}
+    `;
+export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
+
+/**
+ * __useRegisterMutation__
+ *
+ * To run a mutation, you first call `useRegisterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRegisterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [registerMutation, { data, loading, error }] = useRegisterMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useRegisterMutation(baseOptions?: Apollo.MutationHookOptions<RegisterMutation, RegisterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument, options);
+      }
+export type RegisterMutationHookResult = ReturnType<typeof useRegisterMutation>;
+export type RegisterMutationResult = Apollo.MutationResult<RegisterMutation>;
+export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutation, RegisterMutationVariables>;
+export const LoginDocument = gql`
+    query Login($data: LoginInput!) {
+  login(data: $data) {
+    token
+    user {
+      id
+      role
+    }
+  }
+}
+    `;
+
+/**
+ * __useLoginQuery__
+ *
+ * To run a query within a React component, call `useLoginQuery` and pass it any options that fit your needs.
+ * When your component renders, `useLoginQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useLoginQuery({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useLoginQuery(baseOptions: Apollo.QueryHookOptions<LoginQuery, LoginQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+      }
+export function useLoginLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<LoginQuery, LoginQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<LoginQuery, LoginQueryVariables>(LoginDocument, options);
+        }
+export type LoginQueryHookResult = ReturnType<typeof useLoginQuery>;
+export type LoginLazyQueryHookResult = ReturnType<typeof useLoginLazyQuery>;
+export type LoginQueryResult = Apollo.QueryResult<LoginQuery, LoginQueryVariables>;

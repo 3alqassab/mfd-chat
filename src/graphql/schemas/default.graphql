@@ -6,6 +6,10 @@ type Mutation {
 	_empty: String
 }
 
+type Subscription {
+	_empty: String
+}
+
 scalar Upload
 scalar Date
 scalar Null
