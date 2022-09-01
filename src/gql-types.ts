@@ -40,6 +40,7 @@ export type AdminMessage = {
 export type AdminMessageOrderByInput = {
   createdAt?: InputMaybe<OrderDirection>;
   id?: InputMaybe<OrderDirection>;
+  isRead?: InputMaybe<OrderDirection>;
 };
 
 export type AdminMessageSendInput = {
@@ -54,6 +55,7 @@ export type AdminMessageWhereInput = {
   NOT?: InputMaybe<Array<AdminMessageWhereInput>>;
   OR?: InputMaybe<Array<AdminMessageWhereInput>>;
   id?: InputMaybe<IdFilter>;
+  isRead?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type AdminMessageWhereUniqueInput = {

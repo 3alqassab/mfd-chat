@@ -37,6 +37,7 @@ input AdminMessageWhereInput {
 	OR: [AdminMessageWhereInput!]
 	NOT: [AdminMessageWhereInput!]
 	id: IDFilter
+	isRead: Boolean
 }
 
 input AdminMessageSendInput {
@@ -48,6 +49,7 @@ input AdminMessageSendInput {
 
 input AdminMessageOrderByInput {
 	id: OrderDirection
+	isRead: OrderDirection
 
 	createdAt: OrderDirection
 }
