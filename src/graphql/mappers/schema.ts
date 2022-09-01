@@ -1,22 +1,16 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import 'graphql-import-node'
-import * as authenticationTypeDefs from '../schemas/authentication.graphql'
-import * as chatTypeDefs from '../schemas/chat.graphql'
-import * as defaulTypeDefs from '../schemas/default.graphql'
-import * as sharedypeDefs from '../schemas/shared.graphql'
-import * as userTypeDefs from '../schemas/user.graphql'
-import { GraphQLSchema } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
+import fs from 'fs'
+import path from 'path'
 import resolvers from './resolver'
 
-const schema: GraphQLSchema = makeExecutableSchema({
-	typeDefs: [
-		defaulTypeDefs,
-		sharedypeDefs,
-		authenticationTypeDefs,
-		userTypeDefs,
-		chatTypeDefs,
-	],
-	resolvers,
-})
+const dirname = '../schemas'
+
+const typeDefs = fs
+	.readdirSync(path.join(__dirname, dirname))
+	.map((file: any) => require(path.join(__dirname, dirname, file)))
+
+const schema = makeExecutableSchema({ typeDefs, resolvers })
 
 export default schema

@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { User as UserModel, Connection as ConnectionModel, Notification as NotificationModel, Wallet as WalletModel, Purchase as PurchaseModel, Grade as GradeModel, School as SchoolModel, University as UniversityModel, Student as StudentModel, Educator as EducatorModel, Organization as OrganizationModel, Subject as SubjectModel, ClassQuestion as ClassQuestionModel, ClassAnswer as ClassAnswerModel, ClassResource as ClassResourceModel, ClassChapterContent as ClassChapterContentModel, ClassChapter as ClassChapterModel, Class as ClassModel, Ad as AdModel, PostComment as PostCommentModel, Post as PostModel, ContactUs as ContactUsModel, Token as TokenModel, Chat as ChatModel, ChatMessage as ChatMessageModel } from '@prisma/client';
+import { User as UserModel, Connection as ConnectionModel, Notification as NotificationModel, Wallet as WalletModel, Purchase as PurchaseModel, Grade as GradeModel, School as SchoolModel, University as UniversityModel, Student as StudentModel, Educator as EducatorModel, Organization as OrganizationModel, Subject as SubjectModel, ClassQuestion as ClassQuestionModel, ClassAnswer as ClassAnswerModel, ClassResource as ClassResourceModel, ClassChapterContent as ClassChapterContentModel, ClassChapter as ClassChapterModel, Class as ClassModel, Ad as AdModel, PostComment as PostCommentModel, Post as PostModel, Message as MessageModel, Token as TokenModel, Chat as ChatModel, ChatMessage as ChatMessageModel } from '@prisma/client';
 import { Context } from './context';
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
@@ -127,7 +127,7 @@ export type Educator = {
 export type EducatorRegistrationInput = {
   cpr: Scalars['Upload'];
   cv: Scalars['Upload'];
-  university?: InputMaybe<Scalars['ID']>;
+  universityId?: InputMaybe<Scalars['ID']>;
 };
 
 export type Gender =
@@ -170,21 +170,57 @@ export type LoginInput = {
   password: Scalars['String'];
 };
 
+export type Message = {
+  __typename?: 'Message';
+  createdAt: Scalars['Date'];
+  email: Scalars['String'];
+  id: Scalars['ID'];
+  message: Scalars['String'];
+  mobile: Scalars['String'];
+  name: Scalars['String'];
+  updatedAt: Scalars['Date'];
+};
+
 export type MessageCreateInput = {
-  chat: Scalars['ID'];
+  chatId: Scalars['ID'];
   content: Scalars['Upload'];
   type: ChatMessageType;
 };
 
+export type MessageOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type MessageSendInput = {
+  email: Scalars['String'];
+  message: Scalars['String'];
+  mobile: Scalars['String'];
+  name: Scalars['String'];
+};
+
+export type MessageWhereInput = {
+  AND?: InputMaybe<Array<MessageWhereInput>>;
+  NOT?: InputMaybe<Array<MessageWhereInput>>;
+  OR?: InputMaybe<Array<MessageWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type MessageWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
-  _empty?: Maybe<Scalars['String']>;
   createUser?: Maybe<User>;
+  deleteMessage?: Maybe<Message>;
   deleteUser?: Maybe<User>;
   register?: Maybe<Authentication>;
   requestPasswordReset?: Maybe<Scalars['Boolean']>;
   resetPassword?: Maybe<Authentication>;
+  sendMessage?: Maybe<Message>;
   sendMessageToChat: ChatMessage;
+  toggleIsRead?: Maybe<Message>;
   updateMyUser?: Maybe<User>;
   updateUser?: Maybe<User>;
 };
@@ -192,6 +228,11 @@ export type Mutation = {
 
 export type MutationCreateUserArgs = {
   data: UserCreateInput;
+};
+
+
+export type MutationDeleteMessageArgs = {
+  where: MessageWhereUniqueInput;
 };
 
 
@@ -215,8 +256,18 @@ export type MutationResetPasswordArgs = {
 };
 
 
+export type MutationSendMessageArgs = {
+  data: MessageSendInput;
+};
+
+
 export type MutationSendMessageToChatArgs = {
   data: MessageCreateInput;
+};
+
+
+export type MutationToggleIsReadArgs = {
+  where: MessageWhereUniqueInput;
 };
 
 
@@ -284,13 +335,14 @@ export type PurchaseType =
 
 export type Query = {
   __typename?: 'Query';
-  _empty?: Maybe<Scalars['String']>;
   chats: Array<Chat>;
   chatsCount?: Maybe<Scalars['Int']>;
   checkEmail?: Maybe<Scalars['Boolean']>;
   login?: Maybe<Authentication>;
+  message?: Maybe<Message>;
+  messages: Array<Message>;
+  messagesCount?: Maybe<Scalars['Int']>;
   myUser?: Maybe<User>;
-  refreshToken?: Maybe<Authentication>;
   user?: Maybe<User>;
   users: Array<User>;
   usersCount?: Maybe<Scalars['Int']>;
@@ -320,8 +372,21 @@ export type QueryLoginArgs = {
 };
 
 
-export type QueryRefreshTokenArgs = {
-  data: RefreshTokenInput;
+export type QueryMessageArgs = {
+  where: MessageWhereUniqueInput;
+};
+
+
+export type QueryMessagesArgs = {
+  orderBy?: InputMaybe<Array<MessageOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<MessageWhereInput>;
+};
+
+
+export type QueryMessagesCountArgs = {
+  where?: InputMaybe<MessageWhereInput>;
 };
 
 
@@ -418,10 +483,10 @@ export type Student = {
 
 export type StudentRegistrationInput = {
   batch?: InputMaybe<Scalars['String']>;
-  grade?: InputMaybe<Scalars['ID']>;
+  gradeId?: InputMaybe<Scalars['ID']>;
   level: Level;
   major?: InputMaybe<Scalars['String']>;
-  school?: InputMaybe<Scalars['ID']>;
+  schoolId?: InputMaybe<Scalars['ID']>;
 };
 
 export type Subject = {
@@ -445,7 +510,6 @@ export type SubjectLevel =
 
 export type Subscription = {
   __typename?: 'Subscription';
-  _empty?: Maybe<Scalars['String']>;
   chat: Chat;
   chats: Array<Chat>;
 };
@@ -639,7 +703,12 @@ export type ResolversTypes = {
   Int: ResolverTypeWrapper<Scalars['Int']>;
   Level: Level;
   LoginInput: LoginInput;
+  Message: ResolverTypeWrapper<MessageModel>;
   MessageCreateInput: MessageCreateInput;
+  MessageOrderByInput: MessageOrderByInput;
+  MessageSendInput: MessageSendInput;
+  MessageWhereInput: MessageWhereInput;
+  MessageWhereUniqueInput: MessageWhereUniqueInput;
   Mutation: ResolverTypeWrapper<{}>;
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
@@ -699,7 +768,12 @@ export type ResolversParentTypes = {
   IDFilter: IdFilter;
   Int: Scalars['Int'];
   LoginInput: LoginInput;
+  Message: MessageModel;
   MessageCreateInput: MessageCreateInput;
+  MessageOrderByInput: MessageOrderByInput;
+  MessageSendInput: MessageSendInput;
+  MessageWhereInput: MessageWhereInput;
+  MessageWhereUniqueInput: MessageWhereUniqueInput;
   Mutation: {};
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
@@ -808,14 +882,27 @@ export type GradeResolvers<ContextType = Context, ParentType extends ResolversPa
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type MessageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Message'] = ResolversParentTypes['Message']> = {
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  mobile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'data'>>;
+  deleteMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationDeleteMessageArgs, 'where'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'where'>>;
   register?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
   requestPasswordReset?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRequestPasswordResetArgs, 'data'>>;
   resetPassword?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'data'>>;
+  sendMessage?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationSendMessageArgs, 'data'>>;
   sendMessageToChat?: Resolver<ResolversTypes['ChatMessage'], ParentType, ContextType, RequireFields<MutationSendMessageToChatArgs, 'data'>>;
+  toggleIsRead?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<MutationToggleIsReadArgs, 'where'>>;
   updateMyUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateMyUserArgs, 'data'>>;
   updateUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateUserArgs, 'data' | 'where'>>;
 };
@@ -855,13 +942,14 @@ export type PurchaseResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   chats?: Resolver<Array<ResolversTypes['Chat']>, ParentType, ContextType, RequireFields<QueryChatsArgs, 'skip' | 'take' | 'where'>>;
   chatsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryChatsCountArgs, 'where'>>;
   checkEmail?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<QueryCheckEmailArgs, 'data'>>;
   login?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<QueryLoginArgs, 'data'>>;
+  message?: Resolver<Maybe<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryMessageArgs, 'where'>>;
+  messages?: Resolver<Array<ResolversTypes['Message']>, ParentType, ContextType, RequireFields<QueryMessagesArgs, 'skip' | 'take' | 'where'>>;
+  messagesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryMessagesCountArgs, 'where'>>;
   myUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  refreshToken?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<QueryRefreshTokenArgs, 'data'>>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'skip' | 'take' | 'where'>>;
   usersCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryUsersCountArgs, 'where'>>;
@@ -908,7 +996,6 @@ export type SubjectResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = {
-  _empty?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "_empty", ParentType, ContextType>;
   chat?: SubscriptionResolver<ResolversTypes['Chat'], "chat", ParentType, ContextType, RequireFields<SubscriptionChatArgs, 'where'>>;
   chats?: SubscriptionResolver<Array<ResolversTypes['Chat']>, "chats", ParentType, ContextType>;
 };
@@ -964,6 +1051,7 @@ export type Resolvers<ContextType = Context> = {
   Date?: GraphQLScalarType;
   Educator?: EducatorResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
+  Message?: MessageResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Null?: GraphQLScalarType;
   NullableID?: GraphQLScalarType;

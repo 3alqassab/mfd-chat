@@ -3,7 +3,7 @@ import { Resolvers } from '../../gql-types'
 import { validateEmail, validatePassword } from '../../functions/validate'
 import Hash from '../../functions/hash'
 
-const User: Resolvers = {
+export default {
 	University: {
 		async educators({ id }, __, { database }) {
 			return await database.educator.findMany({
@@ -171,6 +171,4 @@ const User: Resolvers = {
 			return await database.user.delete(input)
 		},
 	},
-}
-
-export default User
+} as Resolvers

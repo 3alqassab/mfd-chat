@@ -1,5 +1,5 @@
 {
-	"name": "graphql-template",
+	"name": "mufeed-backend",
 	"version": "0.2.0",
 	"private": true,
 	"scripts": {
@@ -9,7 +9,8 @@
 		"codegen": "graphql-codegen --config codegen.yml",
 		"postinstall": "prisma generate",
 		"deploy": "SLS_DEBUG=* serverless deploy",
-		"domain": "SLS_DEBUG=* serverless create_domain"
+		"domain": "SLS_DEBUG=* serverless create_domain",
+		"generate:gql": "node ./scripts/generateGQLFiles.js"
 	},
 	"devDependencies": {
 		"@404-software/eslint-config": "^1.0.13",
@@ -25,6 +26,7 @@
 		"@types/lodash": "^4.14.184",
 		"@types/node": "^18.7.6",
 		"copy-webpack-plugin": "^11.0.0",
+		"enquirer": "^2.3.6",
 		"eslint": "^8.22.0",
 		"nodemon": "^2.0.19",
 		"prettier": "^2.7.1",

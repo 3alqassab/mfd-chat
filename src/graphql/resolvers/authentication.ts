@@ -13,7 +13,7 @@ if (!API_SECRET)
 const signJWT = (payload: Token) =>
 	jwt.sign(payload, API_SECRET, { expiresIn: '31d' })
 
-const Authentication: Resolvers = {
+export default {
 	Query: {
 		async login(_, { data: { email, password } }, { database }) {
 			validateEmail(email)
@@ -44,25 +44,6 @@ const Authentication: Resolvers = {
 
 			return true
 		},
-
-		async refreshToken(_, { data: { token } }, { database }) {
-			const API_SECRET = process.env.API_SECRET
-
-			if (!API_SECRET) throw ApolloError(ERRORS.INTERNAL_ERROR)
-
-			const { id } = verify(token.replace(/^Bearer /i, ''), API_SECRET) as Token
-
-			const user = await database.user.findUnique({
-				where: { id },
-			})
-
-			if (!user) throw ApolloError(ERRORS.INVALID_TOKEN)
-
-			return {
-				user,
-				token: signJWT({ id: user.id }),
-			}
-		},
 	},
 
 	Mutation: {
@@ -88,16 +69,7 @@ const Authentication: Resolvers = {
 					...rest,
 					wallet: { create: {} },
 					student: !student ? undefined : { create: student },
-					educator: !educator
-						? undefined
-						: {
-								create: {
-									...educator,
-									university: {
-										connect: { id: educator.university },
-									},
-								},
-						  },
+					educator: !educator ? undefined : { create: educator },
 				},
 			})
 
@@ -173,6 +145,4 @@ const Authentication: Resolvers = {
 			}
 		},
 	},
-}
-
-export default Authentication
+} as Resolvers

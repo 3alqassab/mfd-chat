@@ -36,7 +36,7 @@ generates:
         Ad: '@prisma/client#Ad'
         PostComment: '@prisma/client#PostComment'
         Post: '@prisma/client#Post'
-        ContactUs: '@prisma/client#ContactUs'
+        Message: '@prisma/client#Message'
         Token: '@prisma/client#Token'
         Chat: '@prisma/client#Chat'
         ChatMessage: '@prisma/client#ChatMessage'

@@ -1,0 +1,52 @@
+extend type Query {
+	message(where: MessageWhereUniqueInput!): Message
+	messages(
+		where: MessageWhereInput = {}
+		orderBy: [MessageOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Message!]!
+	messagesCount(where: MessageWhereInput = {}): Int
+}
+
+extend type Mutation {
+	sendMessage(data: MessageSendInput!): Message
+	toggleIsRead(where: MessageWhereUniqueInput!): Message
+	deleteMessage(where: MessageWhereUniqueInput!): Message
+}
+
+type Message {
+	id: ID!
+
+	name: String!
+	email: String!
+	message: String!
+	mobile: String!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input MessageWhereUniqueInput {
+	id: ID
+}
+
+input MessageWhereInput {
+	AND: [MessageWhereInput!]
+	OR: [MessageWhereInput!]
+	NOT: [MessageWhereInput!]
+	id: IDFilter
+}
+
+input MessageSendInput {
+	name: String!
+	email: String!
+	message: String!
+	mobile: String!
+}
+
+input MessageOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

@@ -1,7 +1,6 @@
 extend type Query {
 	login(data: LoginInput!): Authentication
 	checkEmail(data: CheckEmailInput!): Boolean
-	refreshToken(data: RefreshTokenInput!): Authentication
 }
 
 extend type Mutation {
@@ -30,8 +29,8 @@ input RefreshTokenInput {
 
 input StudentRegistrationInput {
 	level: Level!
-	school: ID
-	grade: ID
+	schoolId: ID
+	gradeId: ID
 	batch: String
 	major: String
 }
@@ -39,7 +38,7 @@ input StudentRegistrationInput {
 input EducatorRegistrationInput {
 	cpr: Upload!
 	cv: Upload!
-	university: ID
+	universityId: ID
 }
 
 input RegistrationInput {

@@ -423,7 +423,7 @@ model Post {
   comments PostComment[]
 }
 
-model ContactUs {
+model Message {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -432,6 +432,7 @@ model ContactUs {
   mobile  String
   email   String
   message String
+  isRead  Boolean @default(false)
 }
 
 enum ChatMessageType {

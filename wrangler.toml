@@ -1,4 +1,4 @@
-name = "graphql-template"
+name = "mufeed-backend"
 type = "webpack"
 route = ''
 zone_id = ''

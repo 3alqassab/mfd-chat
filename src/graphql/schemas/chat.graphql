@@ -60,7 +60,7 @@ input ChatWhereInput {
 input MessageCreateInput {
 	type: ChatMessageType!
 	content: Upload!
-	chat: ID!
+	chatId: ID!
 }
 
 input ChatOrderByInput {

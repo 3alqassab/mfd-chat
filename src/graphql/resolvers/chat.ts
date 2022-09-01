@@ -1,32 +1,24 @@
-import { Chat, Resolvers } from '../../gql-types'
-import { Prisma, PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client'
 import { PubSub } from 'graphql-subscriptions'
+import { Resolvers } from '../../gql-types'
 
 const pubsub = new PubSub()
 
 const updateChat = async (database: PrismaClient, chatId: string) => {
-	const chat = await database.chat.findUnique({
-		where: {
-			id: chatId,
-		},
-	})
+	const chat = await database.chat.findUnique({ where: { id: chatId } })
 
 	pubsub.publish(`chat_${chatId}`, { chat })
 }
 
-const updateChats = async (database: PrismaClient, userId?: string) => {
+const updateChats = async (database: PrismaClient, userId: string) => {
 	const chats = await database.chat.findMany({
-		where: {
-			members: {
-				some: { id: userId },
-			},
-		},
+		where: { members: { some: { id: userId } } },
 	})
 
 	pubsub.publish(`chats_${userId}`, { chats })
 }
 
-const Chat: Resolvers = {
+export default {
 	Chat: {
 		async messages({ id }, input, { database }) {
 			return await database.chatMessage.findMany({
@@ -56,16 +48,28 @@ const Chat: Resolvers = {
 	},
 
 	Query: {
-		async chats(_, input, { database, requireAuth, isAdmin }) {
-			requireAuth(isAdmin)
+		async chats(_, input, { database, requireAuth, user }) {
+			requireAuth()
 
-			return await database.chat.findMany(input)
+			return await database.chat.findMany({
+				...input,
+				where: {
+					...input.where,
+					members: { some: { id: user?.id } },
+				},
+			})
 		},
 
-		async chatsCount(_, input, { database, requireAuth, isAdmin }) {
-			requireAuth(isAdmin)
+		async chatsCount(_, input, { database, requireAuth, user }) {
+			requireAuth()
 
-			return await database.chat.count(input)
+			return await database.chat.count({
+				...input,
+				where: {
+					...input.where,
+					members: { some: { id: user?.id } },
+				},
+			})
 		},
 	},
 
@@ -86,7 +90,7 @@ const Chat: Resolvers = {
 				[Symbol.asyncIterator]: () => {
 					requireAuth()
 
-					setTimeout(async () => updateChats(database, user?.id), 0)
+					setTimeout(async () => updateChats(database, user!.id), 0)
 
 					return pubsub.asyncIterator(`chats_${user?.id}`)
 				},
@@ -97,26 +101,24 @@ const Chat: Resolvers = {
 	Mutation: {
 		async sendMessageToChat(
 			_,
-			{ data: { chat: chatId, content, type } },
+			{ data: { chatId, content, type } },
 			{ database, requireAuth, user },
 		) {
 			requireAuth()
 
-			const data: Prisma.ChatMessageCreateInput = {
-				chat: { connect: { id: chatId } },
-				content,
-				type,
-				sender: { connect: { id: user!.id } },
-			}
+			const message = await database.chatMessage.create({
+				data: {
+					chat: { connect: { id: chatId } },
+					content,
+					type,
+					sender: { connect: { id: user!.id } },
+				},
+			})
 
-			const message = await database.chatMessage.create({ data })
-
-			updateChat(database, chatId)
-			updateChats(database, user!.id)
+			await updateChat(database, chatId)
+			await updateChats(database, user!.id)
 
 			return message
 		},
 	},
-}
-
-export default Chat
+} as Resolvers
