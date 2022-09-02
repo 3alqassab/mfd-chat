@@ -67,6 +67,9 @@
 		"ws": "^8.8.1"
 	},
 	"eslintConfig": {
-		"extends": "@404-software/eslint-config"
+		"extends": "@404-software/eslint-config",
+		"rules": {
+			"react-hooks/rules-of-hooks": "off"
+		}
 	}
 }

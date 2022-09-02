@@ -10,7 +10,7 @@ import {
 	ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core'
 import { createServer } from 'http'
-import { useServer as createWebsocketServer } from 'graphql-ws/lib/use/ws'
+import { useServer } from 'graphql-ws/lib/use/ws'
 import { WebSocketServer } from 'ws'
 
 type HeadersType = {
@@ -29,7 +29,7 @@ async function startApolloServer() {
 		path: '/',
 	})
 
-	const serverCleanup = createWebsocketServer(
+	const serverCleanup = useServer(
 		{
 			schema,
 			context: async ({ connectionParams, extra }) => {
