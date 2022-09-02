@@ -19,7 +19,7 @@ export const validatePassword = (password: string) => {
 	if (!valid)
 		throw ApolloError(
 			ERRORS.MALFORMED_INPUT,
-			'Password must at least 8 characters, contain at least one uppercase letter, one number, and one special character',
+			'Password must have at least 8 characters, contain at least one uppercase letter, one number, and one special character',
 		)
 }
 
