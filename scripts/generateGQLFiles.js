@@ -128,6 +128,10 @@ const run = async () => {
 		},
 	])
 
+	if (!singular || !plural)
+		// eslint-disable-next-line no-console
+		return console.log('Please enter a singular and plural name')
+
 	const path = `./src/graphql`
 
 	const resolver = fs.createWriteStream(
