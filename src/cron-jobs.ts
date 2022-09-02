@@ -1,8 +1,13 @@
-require('dotenv').config()
-import { PrismaClient } from '@prisma/client'
-const database = new PrismaClient()
+import { database } from './context'
+import cron from 'node-cron'
 
-export const expireTokens = async () => {
+/* 
+  Generate cron jobs expressions
+  https://crontab.cronhub.io/
+*/
+
+// Run every hour
+cron.schedule('0 * * * *', async () => {
 	const twentyFourHoursAgo = new Date(
 		new Date().setHours(new Date().getHours() - 24),
 	)
@@ -11,4 +16,4 @@ export const expireTokens = async () => {
 		where: { createdAt: { lte: twentyFourHoursAgo } },
 		data: { expired: true },
 	})
-}
+})

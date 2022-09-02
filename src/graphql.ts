@@ -1,17 +1,17 @@
 require('dotenv').config()
+import './cron-jobs'
 import { ApolloServer } from 'apollo-server-express'
-import { graphqlUploadExpress } from 'graphql-upload'
-import ContextSetup from './context'
-import express from 'express'
-import schema from './graphql/mappers/schema'
-
 import {
 	ApolloServerPluginDrainHttpServer,
 	ApolloServerPluginLandingPageLocalDefault,
 } from 'apollo-server-core'
 import { createServer } from 'http'
+import { graphqlUploadExpress } from 'graphql-upload'
 import { useServer } from 'graphql-ws/lib/use/ws'
 import { WebSocketServer } from 'ws'
+import ContextSetup from './context'
+import express from 'express'
+import schema from './graphql/mappers/schema'
 
 type HeadersType = {
 	Authorization?: string
