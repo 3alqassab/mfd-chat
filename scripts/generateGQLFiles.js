@@ -2,9 +2,10 @@ const { prompt } = require('enquirer')
 const fs = require('fs')
 
 const createResolver = ({ singular, plural }) => {
-	const upperSingular = singular.charAt(0).toUpperCase() + singular.slice(1)
-	const lowerSingular = singular.charAt(0).toLowerCase() + singular.slice(1)
-	const lowerPlural = plural.charAt(0).toLowerCase() + plural.slice(1)
+	const upperSingular =
+		singular.charAt(0).toUpperCase() + singular.slice(1).toLowerCase()
+	const lowerSingular = singular.toLowerCase()
+	const lowerPlural = plural.toLowerCase()
 
 	return `
     import { Resolvers } from '../../gql-types'
@@ -54,9 +55,10 @@ const createResolver = ({ singular, plural }) => {
 }
 
 const createSchema = ({ singular, plural }) => {
-	const upperSingular = singular.charAt(0).toUpperCase() + singular.slice(1)
-	const lowerSingular = singular.charAt(0).toLowerCase() + singular.slice(1)
-	const lowerPlural = plural.charAt(0).toLowerCase() + plural.slice(1)
+	const upperSingular =
+		singular.charAt(0).toUpperCase() + singular.slice(1).toLowerCase()
+	const lowerSingular = singular.toLowerCase()
+	const lowerPlural = plural.toLowerCase()
 
 	return `
     extend type Query {
