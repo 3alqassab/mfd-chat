@@ -7,6 +7,7 @@ mutation ResetPassword($data: ResetPasswordInput!) {
 		token
 	}
 }
+
 mutation Register($data: RegistrationInput!) {
 	register(data: $data) {
 		user {
