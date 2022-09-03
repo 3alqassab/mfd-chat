@@ -12,8 +12,8 @@ export const validatePassword = (password: string) => {
 
 	const tests = [/^(?=.*[A-Z])/, /^(?=.*[0-9])/, /^(?=.*[!@#$%^&*])/]
 
-	tests.forEach(({ test }) => {
-		if (!test(password)) valid = false
+	tests.forEach(test => {
+		if (!test.test(password)) valid = false
 	})
 
 	if (valid) return
