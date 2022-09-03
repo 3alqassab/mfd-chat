@@ -1,5 +1,6 @@
 const { prompt } = require('enquirer')
 const fs = require('fs')
+const pluralize = require('pluralize')
 
 const createResolver = ({ singular, plural }) => {
 	const upperSingular =
@@ -8,49 +9,49 @@ const createResolver = ({ singular, plural }) => {
 	const lowerPlural = plural.toLowerCase()
 
 	return `
-    import { Resolvers } from '../../gql-types'
+  import { Resolvers } from '../../gql-types'
 
-    export default {
-      Query: {
-        async ${lowerSingular}(_, input, { database, requireAuth }) {
-          requireAuth()
+  export default {
+    Query: {
+      async ${lowerSingular}(_, input, { database, requireAuth }) {
+        requireAuth()
 
-          return await database.${lowerSingular}.findUnique(input)
-        },
-
-        async ${lowerPlural}(_, input, { database, requireAuth }) {
-          requireAuth()
-
-          return await database.${lowerSingular}.findMany(input)
-        },
-
-        async ${lowerPlural}Count(_, input, { database, requireAuth }) {
-          requireAuth()
-
-          return await database.${lowerSingular}.count(input)
-        },
+        return await database.${lowerSingular}.findUnique(input)
       },
 
-      Mutation: {
-        async create${upperSingular}(_, { data }, { database, requireAuth, isAdmin }) {
-          requireAuth(isAdmin)
+      async ${lowerPlural}(_, input, { database, requireAuth }) {
+        requireAuth()
 
-          return await database.${lowerSingular}.create({ data })
-        },
-
-        async update${upperSingular}(_, { data, where }, { database, requireAuth, isAdmin }) {
-          requireAuth(isAdmin)
-
-          return await database.${lowerSingular}.update({ where, data })
-        },
-
-        async delete${upperSingular}(_, input, { database, requireAuth, isAdmin }) {
-          requireAuth(isAdmin)
-
-          return await database.${lowerSingular}.delete(input)
-        },
+        return await database.${lowerSingular}.findMany(input)
       },
-    } as Resolvers
+
+      async ${lowerPlural}Count(_, input, { database, requireAuth }) {
+        requireAuth()
+
+        return await database.${lowerSingular}.count(input)
+      },
+    },
+
+    Mutation: {
+      async create${upperSingular}(_, { data }, { database, requireAuth, isAdmin }) {
+        requireAuth(isAdmin)
+
+        return await database.${lowerSingular}.create({ data })
+      },
+
+      async update${upperSingular}(_, { data, where }, { database, requireAuth, isAdmin }) {
+        requireAuth(isAdmin)
+
+        return await database.${lowerSingular}.update({ where, data })
+      },
+
+      async delete${upperSingular}(_, input, { database, requireAuth, isAdmin }) {
+        requireAuth(isAdmin)
+
+        return await database.${lowerSingular}.delete(input)
+      },
+    },
+  } as Resolvers
   `
 }
 
@@ -61,76 +62,73 @@ const createSchema = ({ singular, plural }) => {
 	const lowerPlural = plural.toLowerCase()
 
 	return `
-    extend type Query {
-      ${lowerSingular}(where: ${upperSingular}WhereUniqueInput!): ${upperSingular}
-      ${lowerPlural}(
-        where: ${upperSingular}WhereInput = {}
-        orderBy: [${upperSingular}OrderByInput!] = [{ createdAt: "desc" }]
-        take: Int = 10
-        skip: Int = 0
-      ): [${upperSingular}!]!
-      ${lowerPlural}Count(where: ${upperSingular}WhereInput = {}): Int
-    }
-    
-    extend type Mutation {
-      create${upperSingular}(data: ${upperSingular}CreateInput!): ${upperSingular}
-      update${upperSingular}(where: ${upperSingular}WhereUniqueInput!, data: ${upperSingular}UpdateInput!): ${upperSingular}
-      delete${upperSingular}(where: ${upperSingular}WhereUniqueInput!): ${upperSingular}
-    }
-    
-    
-    type ${upperSingular} {
-      id: ID!
-    
-      createdAt: Date!
-      updatedAt: Date!
-    }
-    
-    input ${upperSingular}WhereUniqueInput {
-      id: ID
-    }
-    
-    input ${upperSingular}WhereInput {
-      AND: [${upperSingular}WhereInput!]
-      OR: [${upperSingular}WhereInput!]
-      NOT: [${upperSingular}WhereInput!]
-      id: IDFilter
-    }
-    
-    input ${upperSingular}CreateInput {
-      id: ID
-    }
-    
-    input ${upperSingular}UpdateInput {
-      id: ID
-    }
-    
-    
-    input ${upperSingular}OrderByInput {
-      id: OrderDirection
-    
-      createdAt: OrderDirection
-  }  
+  extend type Query {
+    ${lowerSingular}(where: ${upperSingular}WhereUniqueInput!): ${upperSingular}
+    ${lowerPlural}(
+      where: ${upperSingular}WhereInput = {}
+      orderBy: [${upperSingular}OrderByInput!] = [{ createdAt: "desc" }]
+      take: Int = 10
+      skip: Int = 0
+    ): [${upperSingular}!]!
+    ${lowerPlural}Count(where: ${upperSingular}WhereInput = {}): Int
+  }
+  
+  extend type Mutation {
+    create${upperSingular}(data: ${upperSingular}CreateInput!): ${upperSingular}
+    update${upperSingular}(where: ${upperSingular}WhereUniqueInput!, data: ${upperSingular}UpdateInput!): ${upperSingular}
+    delete${upperSingular}(where: ${upperSingular}WhereUniqueInput!): ${upperSingular}
+  }
+  
+  
+  type ${upperSingular} {
+    id: ID!
+  
+    createdAt: Date!
+    updatedAt: Date!
+  }
+  
+  input ${upperSingular}WhereUniqueInput {
+    id: ID
+  }
+  
+  input ${upperSingular}WhereInput {
+    AND: [${upperSingular}WhereInput!]
+    OR: [${upperSingular}WhereInput!]
+    NOT: [${upperSingular}WhereInput!]
+    id: IDFilter
+  }
+  
+  input ${upperSingular}CreateInput {
+    id: ID
+  }
+  
+  input ${upperSingular}UpdateInput {
+    id: ID
+  }
+  
+  
+  input ${upperSingular}OrderByInput {
+    id: OrderDirection
+  
+    createdAt: OrderDirection
+}  
   `
 }
 
 const run = async () => {
-	const { singular, plural } = await prompt([
+	const { singular } = await prompt([
 		{
 			type: 'input',
 			name: 'singular',
-			message: 'What is the singular name?',
-		},
-		{
-			type: 'input',
-			name: 'plural',
-			message: 'What is the plural name?',
+			message: 'What is the singular name? (e.g. user NOT users)',
 		},
 	])
 
-	if (!singular || !plural)
+	if (!singular)
 		// eslint-disable-next-line no-console
-		return console.log('Please enter a singular and plural name')
+		return console.log('Please enter a name')
+
+	const plural = pluralize.plural(singular)
 
 	const path = `./src/graphql`
 
