@@ -1,0 +1,56 @@
+extend type Query {
+	ad(where: AdWhereUniqueInput!): Ad
+	ads(
+		where: AdWhereInput = {}
+		orderBy: [AdOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Ad!]!
+	adsCount(where: AdWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createAd(data: AdCreateInput!): Ad
+	updateAd(where: AdWhereUniqueInput!, data: AdUpdateInput!): Ad
+	deleteAd(where: AdWhereUniqueInput!): Ad
+}
+
+type Ad {
+	id: ID!
+
+	title: String!
+	titleAr: String!
+	imageUrl: String!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input AdWhereUniqueInput {
+	id: ID
+}
+
+input AdWhereInput {
+	AND: [AdWhereInput!]
+	OR: [AdWhereInput!]
+	NOT: [AdWhereInput!]
+	id: IDFilter
+}
+
+input AdCreateInput {
+	title: String!
+	titleAr: String!
+	image: Upload!
+}
+
+input AdUpdateInput {
+	title: String
+	titleAr: String
+	image: Upload
+}
+
+input AdOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

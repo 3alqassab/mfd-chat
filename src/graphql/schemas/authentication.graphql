@@ -30,9 +30,11 @@ input RefreshTokenInput {
 input StudentRegistrationInput {
 	level: Level!
 	schoolId: ID
+	universityId: ID
 	gradeId: ID
+	majorId: ID
+	collegeId: ID
 	batch: String
-	major: String
 }
 
 input EducatorRegistrationInput {

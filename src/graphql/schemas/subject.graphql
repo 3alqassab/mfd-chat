@@ -1,0 +1,88 @@
+extend type Query {
+	subject(where: SubjectWhereUniqueInput!): Subject
+	subjects(
+		where: SubjectWhereInput = {}
+		orderBy: [SubjectOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Subject!]!
+	subjectsCount(where: SubjectWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createSubject(data: SubjectCreateInput!): Subject
+	updateSubject(where: SubjectWhereUniqueInput!, data: SubjectUpdateInput!): Subject
+	deleteSubject(where: SubjectWhereUniqueInput!): Subject
+}
+
+enum SubjectLevel {
+	SCHOOl
+	UNIVERSITY
+}
+
+type Subject {
+	id: ID!
+
+	thumbnailUrl: String
+	name: String!
+	nameAr: String
+	level: SubjectLevel!
+	tags: [String!]
+	major: Major
+
+	educators: [Educator!]
+	classes: [Class!]
+
+	# University
+	year: Int
+
+	createdBy: Organization
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input SubjectWhereUniqueInput {
+	id: ID
+}
+
+input SubjectWhereInput {
+	AND: [SubjectWhereInput!]
+	OR: [SubjectWhereInput!]
+	NOT: [SubjectWhereInput!]
+	id: IDFilter
+}
+
+input SubjectCreateInput {
+	thumbnail: Upload
+	name: String!
+	nameAr: String!
+	level: SubjectLevel!
+	tags: [String!]
+	majorId: ID
+
+	# University
+	year: Int
+
+	createdById: ID
+}
+
+input SubjectUpdateInput {
+	thumbnail: Upload
+	name: String
+	nameAr: String
+	level: SubjectLevel
+	tags: [String!]
+	majorId: ID
+
+	# University
+	year: Int
+
+	createdById: ID
+}
+
+input SubjectOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

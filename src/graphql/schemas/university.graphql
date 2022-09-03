@@ -1,0 +1,61 @@
+extend type Query {
+	university(where: UniversityWhereUniqueInput!): University
+	universities(
+		where: UniversityWhereInput = {}
+		orderBy: [UniversityOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [University!]!
+	universitiesCount(where: UniversityWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createUniversity(data: UniversityCreateInput!): University
+	updateUniversity(where: UniversityWhereUniqueInput!, data: UniversityUpdateInput!): University
+	deleteUniversity(where: UniversityWhereUniqueInput!): University
+}
+
+type University {
+	id: ID!
+
+	name: String!
+	nameAr: String
+	colleges: [College!]
+	educators: [Educator!]
+	subjects: [Subject!]
+	students: [Student!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input UniversityWhereUniqueInput {
+	id: ID
+}
+
+input UniversityWhereInput {
+	AND: [UniversityWhereInput!]
+	OR: [UniversityWhereInput!]
+	NOT: [UniversityWhereInput!]
+	id: IDFilter
+	name: StringNullableFilter
+	nameAr: StringNullableFilter
+}
+
+input UniversityCreateInput {
+	name: String!
+	nameAr: String!
+	collegesIds: [ID!]
+}
+
+input UniversityUpdateInput {
+	name: String
+	nameAr: String
+	collegesIds: [ID!]
+}
+
+input UniversityOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

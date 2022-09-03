@@ -1,0 +1,32 @@
+extend type Subscription {
+	notifications: [Notification!]!
+}
+
+enum NotificationType {
+	LIVE
+	CONNECTION
+}
+
+type Notification {
+	id: ID!
+
+	type: NotificationType
+	connection: Connection
+	liveStream: LiveStream
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input NotificationWhereInput {
+	AND: [NotificationWhereInput!]
+	OR: [NotificationWhereInput!]
+	NOT: [NotificationWhereInput!]
+	id: IDFilter
+}
+
+input NotificationOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

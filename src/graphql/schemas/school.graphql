@@ -1,0 +1,61 @@
+extend type Query {
+	school(where: SchoolWhereUniqueInput!): School
+	schools(
+		where: SchoolWhereInput = {}
+		orderBy: [SchoolOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [School!]!
+	schoolsCount(where: SchoolWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createSchool(data: SchoolCreateInput!): School
+	updateSchool(where: SchoolWhereUniqueInput!, data: SchoolUpdateInput!): School
+	deleteSchool(where: SchoolWhereUniqueInput!): School
+}
+
+type School {
+	id: ID!
+
+	name: String!
+	nameAr: String
+
+	grades: [Grade!]
+	students: [Student!]
+	subjects: [Subject!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input SchoolWhereUniqueInput {
+	id: ID
+}
+
+input SchoolWhereInput {
+	AND: [SchoolWhereInput!]
+	OR: [SchoolWhereInput!]
+	NOT: [SchoolWhereInput!]
+	id: IDFilter
+	name: StringNullableFilter
+	nameAr: StringNullableFilter
+}
+
+input SchoolCreateInput {
+	name: String!
+	nameAr: String!
+	gradesIds: [ID!]
+}
+
+input SchoolUpdateInput {
+	name: String
+	nameAr: String
+	gradesIds: [ID!]
+}
+
+input SchoolOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

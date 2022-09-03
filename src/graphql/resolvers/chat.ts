@@ -1,13 +1,12 @@
 import { Prisma, PrismaClient } from '@prisma/client'
-import { PubSub } from 'graphql-subscriptions'
+import { pubsub } from '../../context'
 import { Resolvers } from '../../gql-types'
-
-const pubsub = new PubSub()
+import Hash from '../../functions/hash'
 
 const updateChat = async (database: PrismaClient, chatId: string) => {
 	const chat = await database.chat.findUnique({ where: { id: chatId } })
 
-	pubsub.publish(`chat_${chatId}`, { chat })
+	pubsub.publish(Hash(`chat_${chatId}`), { chat })
 }
 
 const updateChats = async (database: PrismaClient, userId: string) => {
@@ -15,7 +14,7 @@ const updateChats = async (database: PrismaClient, userId: string) => {
 		where: { members: { some: { id: userId } } },
 	})
 
-	pubsub.publish(`chats_${userId}`, { chats })
+	pubsub.publish(Hash(`chats_${userId}`), { chats })
 }
 
 export default {
@@ -81,7 +80,7 @@ export default {
 
 					setTimeout(async () => updateChat(database, id), 0)
 
-					return pubsub.asyncIterator([`chat_${id}`])
+					return pubsub.asyncIterator([Hash(`chat_${id}`)])
 				},
 			}),
 		},
@@ -93,7 +92,7 @@ export default {
 
 					setTimeout(async () => updateChats(database, user!.id), 0)
 
-					return pubsub.asyncIterator(`chats_${user?.id}`)
+					return pubsub.asyncIterator(Hash(`chats_${user!.id}`))
 				},
 			}),
 		},

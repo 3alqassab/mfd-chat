@@ -9,77 +9,12 @@ enum Level {
 	OTHER
 }
 
-enum SubjectLevel {
-	SCHOOl
-	UNIVERSITY
-}
-
-type School {
-	id: ID!
-
-	name: String!
-	nameAr: String
-
-	grades: [Grade!]
-	students: [Student!]
-	subjects: [Subject!]
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type Grade {
-	id: ID!
-
-	name: String!
-	nameAr: String
-
-	students: [Student!]
-	schools: [School!]
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type Subject {
-	id: ID!
-
-	thumbnailUrl: String
-	name: String!
-	nameAr: String
-	level: SubjectLevel!
-	tags: [String!]
-	major: String
-
-	# University
-	year: Int
-
-	createdBy: Organization
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
 type Organization {
 	id: ID!
 
 	name: String!
 	nameAr: String
 	imageUrl: String!
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type University {
-	id: ID!
-
-	name: String!
-	nameAr: String
-	majors: [String!]
-	educators: [Educator!]
-	subjects: [Subject!]
-	stundents: [Student!]
 
 	createdAt: Date!
 	updatedAt: Date!
@@ -128,6 +63,38 @@ type Purchase {
 	points: Int
 	class: Class
 	wallet: Wallet!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type College {
+	id: ID!
+
+	name: String!
+	nameAr: String
+
+	majors: [Major!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Connection {
+	id: ID!
+
+	user1: User
+	user2: User
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type LiveStream {
+	id: ID!
+
+	url: String!
+	startTime: Date!
 
 	createdAt: Date!
 	updatedAt: Date!

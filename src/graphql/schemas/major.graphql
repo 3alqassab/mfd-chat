@@ -1,0 +1,65 @@
+extend type Query {
+	major(where: MajorWhereUniqueInput!): Major
+	majors(
+		where: MajorWhereInput = {}
+		orderBy: [MajorOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Major!]!
+	majorsCount(where: MajorWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createMajor(data: MajorCreateInput!): Major
+	updateMajor(where: MajorWhereUniqueInput!, data: MajorUpdateInput!): Major
+	deleteMajor(where: MajorWhereUniqueInput!): Major
+}
+
+enum MajorType {
+	SCHOOL
+	UNIVERSITY
+}
+
+type Major {
+	id: ID!
+
+	name: String!
+	nameAr: String!
+	type: MajorType!
+	colleges: [College!]
+	schools: [School!]
+	students: [Student!]
+	subjects: [Subject!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input MajorWhereUniqueInput {
+	id: ID
+}
+
+input MajorWhereInput {
+	AND: [MajorWhereInput!]
+	OR: [MajorWhereInput!]
+	NOT: [MajorWhereInput!]
+	id: IDFilter
+}
+
+input MajorCreateInput {
+	name: String!
+	nameAr: String!
+	type: MajorType!
+}
+
+input MajorUpdateInput {
+	name: String
+	nameAr: String
+	type: MajorType
+}
+
+input MajorOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

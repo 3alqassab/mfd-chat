@@ -8,14 +8,6 @@ import {
 import Hash from '../../functions/hash'
 
 export default {
-	University: {
-		async educators({ id }, __, { database }) {
-			return await database.educator.findMany({
-				where: { universityId: id },
-			})
-		},
-	},
-
 	Student: {
 		async university({ universityId }, __, { database }) {
 			if (!universityId) return null
@@ -79,6 +71,12 @@ export default {
 			return await database.student.findUnique({ where: { userId: id } })
 		},
 
+		async email({ email }, __, { isAdmin }) {
+			if (!isAdmin) return ''
+
+			return email
+		},
+
 		async mobile({ mobile }, __, { isAdmin }) {
 			if (!isAdmin) return ''
 
@@ -92,6 +90,23 @@ export default {
 				where: { userId: id },
 			})
 		},
+
+		async connections({ id }, __, { database, user, requireAuth }) {
+			const isConnected = await database.connection.findFirst({
+				where: {
+					OR: [
+						{ user1: id, user2: user?.id },
+						{ user1: user?.id, user2: id },
+					],
+				},
+			})
+
+			requireAuth(!!isConnected || user?.id === id)
+
+			return await database.connection.findMany({
+				where: { OR: [{ user1: id }, { user2: id }] },
+			})
+		},
 	},
 
 	Query: {
@@ -101,20 +116,20 @@ export default {
 			return await database.user.findUnique({ where: { id: user?.id } })
 		},
 
-		async user(_, input, { database, requireAuth, isAdmin }) {
-			requireAuth(isAdmin)
+		async user(_, input, { database, requireAuth }) {
+			requireAuth()
 
 			return await database.user.findUnique(input)
 		},
 
-		async users(_, input, { database, requireAuth, isAdmin }) {
-			requireAuth(isAdmin)
+		async users(_, input, { database, requireAuth }) {
+			requireAuth()
 
 			return await database.user.findMany(input)
 		},
 
-		async usersCount(_, input, { database, requireAuth, isAdmin }) {
-			requireAuth(isAdmin)
+		async usersCount(_, input, { database, requireAuth }) {
+			requireAuth()
 
 			return await database.user.count(input)
 		},

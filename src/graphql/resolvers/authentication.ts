@@ -87,18 +87,69 @@ export default {
 			validateEmail(email.trim().toLowerCase())
 			validateMobile(mobile.trim())
 
+			if (student?.level === 'UNIVERSITY') {
+				if (
+					!student.collegeId ||
+					!student.majorId ||
+					!student.universityId ||
+					!student.batch
+				)
+					throw ApolloError(
+						'MALFORMED_INPUT',
+						'Please provide college, major, university, and batch',
+					)
+			}
+
+			if (student?.level === 'SCHOOL') {
+				if (!student.schoolId || !student.gradeId || !student.majorId)
+					throw ApolloError(
+						'MALFORMED_INPUT',
+						'Please provide school, grade, and major',
+					)
+			}
+
 			try {
 				const user = await database.user.create({
 					data: {
 						password: Hash(password),
 						role: student ? 'STUDENT' : 'EDUCATOR',
 						wallet: { create: {} },
-						student: !student ? undefined : { create: student },
+						student: !student
+							? undefined
+							: {
+									create: {
+										level: student.level,
+										university:
+											student.level === 'UNIVERSITY'
+												? { connect: { id: student.universityId } }
+												: undefined,
+										college:
+											student.level === 'UNIVERSITY'
+												? { connect: { id: student.collegeId } }
+												: undefined,
+										batch:
+											student.level === 'UNIVERSITY'
+												? student.batch
+												: undefined,
+										school:
+											student.level === 'SCHOOL'
+												? { connect: { id: student.schoolId } }
+												: undefined,
+										grade:
+											student.level === 'SCHOOL'
+												? { connect: { id: student.gradeId } }
+												: undefined,
+										major:
+											student.level !== 'OTHER'
+												? { connect: { id: student.majorId } }
+												: undefined,
+									},
+							  },
 						educator: !educator
 							? undefined
 							: {
 									create: {
-										universityId: educator.universityId,
+										university: { connect: { id: educator.universityId } },
 										cvUrl: educator.cv,
 										cprUrl: educator.cpr,
 										active: false,

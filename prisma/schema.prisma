@@ -33,6 +33,7 @@ model User {
   gender            Gender
   profilePictureUrl String?
 
+  wallet        Wallet?
   student       Student?
   educator      Educator?
   answers       ClassAnswer[]
@@ -40,12 +41,9 @@ model User {
   comments      PostComment[]
   posts         Post[]         @relation("createdPosts")
   likedPosts    Post[]         @relation("likedPosts")
-
-  wallet Wallet?
-
-  classes      Class[]
-  chats        Chat[]
-  chatMessages ChatMessage[]
+  classes       Class[]
+  chats         Chat[]
+  chatMessages  ChatMessage[]
 }
 
 model Connection {
@@ -123,29 +121,17 @@ enum Level {
   OTHER
 }
 
-model Grade {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  name   String
-  nameAr String?
-
-  students Student[]
-  schools  School[]
-}
-
 model School {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   name   String
-  nameAr String?
+  nameAr String
 
   grades   Grade[]
+  majors   Major[]
   students Student[]
-  subjects Subject[]
 }
 
 model University {
@@ -154,13 +140,58 @@ model University {
   updatedAt DateTime @updatedAt
 
   name   String
-  nameAr String?
+  nameAr String
 
-  majors    String[]
   educators Educator[]
 
-  subjects Subject[]
   students Student[]
+  colleges College[]
+}
+
+model Grade {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  nameAr String
+
+  students Student[]
+  schools  School[]
+}
+
+enum MajorType {
+  SCHOOL
+  UNIVERSITY
+}
+
+model Major {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  nameAr String
+
+  type MajorType
+
+  schools  School[]
+  students Student[]
+  colleges College[]
+  subjects Subject[]
+}
+
+model College {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  nameAr String
+
+  majors       Major[]
+  students     Student[]
+  universities University[]
 }
 
 model Student {
@@ -173,17 +204,19 @@ model Student {
   // School
   school   School? @relation(fields: [schoolId], references: [id])
   schoolId String?
-
-  grade   Grade?  @relation(fields: [gradeId], references: [id])
-  gradeId String?
+  grade    Grade?  @relation(fields: [gradeId], references: [id])
+  gradeId  String?
 
   // University
   batch        String?
   university   University? @relation(fields: [universityId], references: [id])
   universityId String?
+  college      College?    @relation(fields: [collegeId], references: [id])
+  collegeId    String?
 
   // Shared
-  major String?
+  major   Major?  @relation(fields: [majorId], references: [id])
+  majorId String?
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String @unique
@@ -235,11 +268,13 @@ model Subject {
   thumbnailUrl String?
 
   name   String
-  nameAr String?
+  nameAr String
 
   level SubjectLevel
   tags  String[]
-  major String?
+
+  major   Major?  @relation(fields: [majorId], references: [id])
+  majorId String?
 
   // University
   year Int?
@@ -247,10 +282,8 @@ model Subject {
   createdBy   Organization @relation(fields: [createdById], references: [id])
   createdById String
 
-  educators    Educator[]
-  schools      School[]
-  universities University[]
-  classes      Class[]
+  educators Educator[]
+  classes   Class[]
 }
 
 model ClassQuestion {
@@ -381,6 +414,9 @@ model Ad {
   id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  title   String
+  titleAr String
 
   imageUrl String
 }

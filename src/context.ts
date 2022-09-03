@@ -1,9 +1,11 @@
 import { ApolloError } from './functions/errors'
 import { PrismaClient } from '@prisma/client'
+import { PubSub } from 'graphql-subscriptions'
 import { User } from './gql-types'
 import { verify } from 'jsonwebtoken'
 
 export const database = new PrismaClient()
+export const pubsub = new PubSub()
 
 export type Context = {
 	database: PrismaClient

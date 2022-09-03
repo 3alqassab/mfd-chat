@@ -1,0 +1,55 @@
+extend type Query {
+	grade(where: GradeWhereUniqueInput!): Grade
+	grades(
+		where: GradeWhereInput = {}
+		orderBy: [GradeOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Grade!]!
+	gradesCount(where: GradeWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createGrade(data: GradeCreateInput!): Grade
+	updateGrade(where: GradeWhereUniqueInput!, data: GradeUpdateInput!): Grade
+	deleteGrade(where: GradeWhereUniqueInput!): Grade
+}
+
+type Grade {
+	id: ID!
+
+	name: String
+	nameAr: String
+	schools: [School!]
+	students: [Student!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input GradeWhereUniqueInput {
+	id: ID
+}
+
+input GradeWhereInput {
+	AND: [GradeWhereInput!]
+	OR: [GradeWhereInput!]
+	NOT: [GradeWhereInput!]
+	id: IDFilter
+}
+
+input GradeCreateInput {
+	name: String!
+	nameAr: String!
+}
+
+input GradeUpdateInput {
+	name: String
+	nameAr: String
+}
+
+input GradeOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

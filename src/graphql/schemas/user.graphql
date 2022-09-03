@@ -70,6 +70,7 @@ type User {
 	student: Student
 	educator: Educator
 	wallet: Wallet!
+	connections: [Connection!]
 
 	createdAt: Date!
 	updatedAt: Date!
