@@ -44,9 +44,7 @@ export default async function ContextSetup({ ip, token }: Request) {
 		token.replace(/^Bearer /i, ''),
 		API_SECRET,
 		(err, decoded) => {
-			if (err) {
-				throw ApolloError(ERRORS.INVALID_TOKEN)
-			}
+			if (err) throw ApolloError(ERRORS.INVALID_TOKEN)
 
 			return decoded
 		},
