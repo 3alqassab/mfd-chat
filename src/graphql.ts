@@ -11,6 +11,7 @@ import { useServer } from 'graphql-ws/lib/use/ws'
 import { WebSocketServer } from 'ws'
 import ContextSetup from './context'
 import express from 'express'
+import rateLimit from 'express-rate-limit'
 import schema from './graphql/mappers/schema'
 
 type HeadersType = {
@@ -20,7 +21,6 @@ type HeadersType = {
 
 async function startApolloServer() {
 	const app = express()
-	app.use(graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }))
 
 	const httpServer = createServer(app)
 
@@ -70,6 +70,19 @@ async function startApolloServer() {
 			ApolloServerPluginLandingPageLocalDefault({ embed: true }),
 		],
 	})
+
+	// Enable file uploads (20MB max)
+	app.use(graphqlUploadExpress({ maxFileSize: 20 * 1000000, maxFiles: 10 }))
+
+	// Enable rate limiting
+	app.use(
+		rateLimit({
+			windowMs: 5 * 60 * 1000, // 5 minutes
+			max: 200, // Limit each IP to 200 requests per `window` (here, per 5 minutes)
+			standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+			legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+		}),
+	)
 
 	await server.start()
 	server.applyMiddleware({ app, path: '/' })
