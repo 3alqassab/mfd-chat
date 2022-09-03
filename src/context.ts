@@ -55,13 +55,10 @@ export default async function ContextSetup({ ip, token }: Request) {
 		select: {
 			id: true,
 			role: true,
-			isActive: true,
 			educator: { select: { id: true } },
 			student: { select: { id: true } },
 		},
 	})
-
-	if (!user.isActive) throw ApolloError('UNAUTHORIZED')
 
 	return {
 		database,

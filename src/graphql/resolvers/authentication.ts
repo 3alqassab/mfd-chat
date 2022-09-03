@@ -19,7 +19,13 @@ const signJWT = (payload: Token) =>
 
 export default {
 	Query: {
-		async login(_, { data: { email, password } }, { database }) {
+		async login(
+			_,
+			{ data: { email, password } },
+			{ database, user: loggedInUser },
+		) {
+			if (loggedInUser) throw ApolloError('UNAUTHORIZED')
+
 			validateEmail(email.trim())
 
 			const user = await database.user.findUnique({
@@ -27,7 +33,6 @@ export default {
 			})
 
 			if (!user) throw ApolloError('NOT_FOUND')
-			if (!user.isActive) throw ApolloError('UNAUTHORIZED')
 
 			if (user.password !== Hash(password))
 				throw ApolloError('INCORRECT_PASSWORD')
@@ -38,7 +43,9 @@ export default {
 			}
 		},
 
-		async checkEmail(_, { data: { email } }, { database }) {
+		async checkEmail(_, { data: { email } }, { database, user: loggedInUser }) {
+			if (loggedInUser) throw ApolloError('UNAUTHORIZED')
+
 			validateEmail(email.trim())
 
 			const user = await database.user.findUnique({
@@ -66,8 +73,10 @@ export default {
 					mobile,
 				},
 			},
-			{ database },
+			{ database, user },
 		) {
+			if (user) throw ApolloError('UNAUTHORIZED')
+
 			if ((!student && !educator) || (student && educator))
 				throw ApolloError(
 					'MALFORMED_INPUT',
@@ -75,32 +84,57 @@ export default {
 				)
 
 			validatePassword(password)
-			validateEmail(email.trim())
+			validateEmail(email.trim().toLowerCase())
 			validateMobile(mobile.trim())
 
-			const user = await database.user.create({
-				data: {
-					password: Hash(password),
-					role: student ? 'STUDENT' : 'EDUCATOR',
-					wallet: { create: {} },
-					student: !student ? undefined : { create: student },
-					educator: !educator ? undefined : { create: educator },
-					isActive: educator ? false : true,
-					email: email.trim().toLowerCase(),
-					firstName: firstName.trim(),
-					lastName: lastName.trim(),
-					mobile: mobile.trim(),
-					gender,
-				},
-			})
+			try {
+				const user = await database.user.create({
+					data: {
+						password: Hash(password),
+						role: student ? 'STUDENT' : 'EDUCATOR',
+						wallet: { create: {} },
+						student: !student ? undefined : { create: student },
+						educator: !educator
+							? undefined
+							: {
+									create: {
+										universityId: educator.universityId,
+										cvUrl: educator.cv,
+										cprUrl: educator.cpr,
+										active: false,
+									},
+							  },
+						email: email.trim().toLowerCase(),
+						firstName: firstName.trim(),
+						lastName: lastName.trim(),
+						mobile: mobile.trim(),
+						gender,
+					},
+				})
 
-			return {
-				user,
-				token: student ? signJWT({ id: user.id }) : null,
+				return {
+					user,
+					token: student ? signJWT({ id: user.id }) : null,
+				}
+			} catch (error) {
+				const {
+					meta: { target },
+				} = error as unknown as {
+					code: string
+					meta: { target: string[] }
+				}
+
+				if (target[0] === 'email') throw ApolloError('USER_EXISTS')
 			}
 		},
 
-		async requestPasswordReset(_, { data: { email } }, { database }) {
+		async requestPasswordReset(
+			_,
+			{ data: { email } },
+			{ database, user: loggedInUser },
+		) {
+			if (loggedInUser) throw ApolloError('UNAUTHORIZED')
+
 			validateEmail(email.trim())
 
 			const user = await database.user.findUnique({
@@ -120,7 +154,13 @@ export default {
 			return true
 		},
 
-		async resetPassword(_, { data: { token, password } }, { database }) {
+		async resetPassword(
+			_,
+			{ data: { token, password } },
+			{ database, user: loggedInUser },
+		) {
+			if (loggedInUser) throw ApolloError('UNAUTHORIZED')
+
 			const savedToken = await database.token.findUnique({
 				where: { token },
 			})

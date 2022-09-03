@@ -32,7 +32,6 @@ model User {
   role              UserRole @default(STUDENT)
   gender            Gender
   profilePictureUrl String?
-  isActive          Boolean  @default(true)
 
   student       Student?
   educator      Educator?
