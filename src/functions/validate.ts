@@ -1,5 +1,5 @@
+import { ApolloError } from './errors'
 import { validate as emailValidation } from 'email-validator'
-import ERRORS, { ApolloError } from './errors'
 const validatePhoneNumber = require('validate-phone-number-node-js') as {
 	validate: (phoneNumber: string) => boolean
 }
@@ -19,7 +19,7 @@ export const validatePassword = (password: string) => {
 	if (valid) return
 
 	throw ApolloError(
-		ERRORS.MALFORMED_INPUT,
+		'MALFORMED_INPUT',
 		'Password must have at least 8 characters, contain at least one uppercase letter, one number, and one special character',
 	)
 }
@@ -27,17 +27,14 @@ export const validatePassword = (password: string) => {
 export const validateEmail = (email: string) => {
 	if (emailValidation(email)) return
 
-	throw ApolloError(
-		ERRORS.MALFORMED_INPUT,
-		'Please provide a valid email address',
-	)
+	throw ApolloError('MALFORMED_INPUT', 'Please provide a valid email address')
 }
 
 export const validateMobile = (mobile: string) => {
 	if (validatePhoneNumber.validate(mobile)) return
 
 	throw ApolloError(
-		ERRORS.MALFORMED_INPUT,
+		'MALFORMED_INPUT',
 		'Please provide a valid mobile number (e.g. +97333123456)',
 	)
 }

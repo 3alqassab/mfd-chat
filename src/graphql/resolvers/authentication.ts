@@ -1,3 +1,4 @@
+import { ApolloError } from '../../functions/errors'
 import { Resolvers } from '../../gql-types'
 import { Token } from '../../context'
 import {
@@ -6,7 +7,6 @@ import {
 	validatePassword,
 } from '../../functions/validate'
 import dayjs from 'dayjs'
-import ERRORS, { ApolloError } from '../../functions/errors'
 import Hash from '../../functions/hash'
 import jwt, { verify } from 'jsonwebtoken'
 
@@ -26,10 +26,11 @@ export default {
 				where: { email: email.trim().toLowerCase() },
 			})
 
-			if (!user) throw ApolloError(ERRORS.NOT_FOUND)
+			if (!user) throw ApolloError('NOT_FOUND')
+			if (!user.isActive) throw ApolloError('UNAUTHORIZED')
 
 			if (user.password !== Hash(password))
-				throw ApolloError(ERRORS.INCORRECT_PASSWORD)
+				throw ApolloError('INCORRECT_PASSWORD')
 
 			return {
 				user,
@@ -69,7 +70,7 @@ export default {
 		) {
 			if ((!student && !educator) || (student && educator))
 				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
+					'MALFORMED_INPUT',
 					'Please select either a student or educator',
 				)
 
@@ -84,6 +85,7 @@ export default {
 					wallet: { create: {} },
 					student: !student ? undefined : { create: student },
 					educator: !educator ? undefined : { create: educator },
+					isActive: educator ? false : true,
 					email: email.trim().toLowerCase(),
 					firstName: firstName.trim(),
 					lastName: lastName.trim(),
@@ -127,7 +129,7 @@ export default {
 
 			if (!id || !savedToken || savedToken.expired)
 				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
+					'MALFORMED_INPUT',
 					'Token provided is invalid or expired',
 				)
 
@@ -138,7 +140,7 @@ export default {
 				})
 
 				throw ApolloError(
-					ERRORS.MALFORMED_INPUT,
+					'MALFORMED_INPUT',
 					'Token provided is invalid or expired',
 				)
 			}

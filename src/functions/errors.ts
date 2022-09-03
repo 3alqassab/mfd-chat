@@ -1,6 +1,6 @@
 import { ApolloError as APError } from 'apollo-server-errors'
 
-const ERRORS: { [key: string]: Error } = Object.entries({
+const ERRORS = {
 	NOT_FOUND: {
 		code: '404',
 		message: 'Not Found',
@@ -33,16 +33,7 @@ const ERRORS: { [key: string]: Error } = Object.entries({
 		code: '401',
 		message: 'Authorization token is required',
 	},
-})
-	.map(([key, value]) => ({ [key]: { ...value, status: 'error' } }))
-	.reduce((acc, cur) => ({ ...acc, ...cur }), {})
-
-export type Error = {
-	code: string
-	message: string
 }
 
-export const ApolloError = (error: Error, ...errors: string[]) =>
-	new APError(error.message, error.code, { errors })
-
-export default ERRORS
+export const ApolloError = (error: keyof typeof ERRORS, ...errors: string[]) =>
+	new APError(ERRORS[error].message, ERRORS[error].code, { errors })

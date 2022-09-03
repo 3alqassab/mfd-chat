@@ -1,7 +1,7 @@
+import { ApolloError } from './functions/errors'
 import { PrismaClient } from '@prisma/client'
 import { User } from './gql-types'
 import { verify } from 'jsonwebtoken'
-import ERRORS, { ApolloError } from './functions/errors'
 
 export const database = new PrismaClient()
 
@@ -35,7 +35,7 @@ export default async function ContextSetup({ ip, token }: Request) {
 			database,
 			isAdmin: false,
 			requireAuth() {
-				throw ApolloError(ERRORS.NO_TOKEN)
+				throw ApolloError('NO_TOKEN')
 			},
 			ip,
 		}
@@ -44,7 +44,7 @@ export default async function ContextSetup({ ip, token }: Request) {
 		token.replace(/^Bearer /i, ''),
 		API_SECRET,
 		(err, decoded) => {
-			if (err) throw ApolloError(ERRORS.INVALID_TOKEN)
+			if (err) throw ApolloError('INVALID_TOKEN')
 
 			return decoded
 		},
@@ -55,10 +55,13 @@ export default async function ContextSetup({ ip, token }: Request) {
 		select: {
 			id: true,
 			role: true,
+			isActive: true,
 			educator: { select: { id: true } },
 			student: { select: { id: true } },
 		},
 	})
+
+	if (!user.isActive) throw ApolloError('UNAUTHORIZED')
 
 	return {
 		database,
@@ -67,7 +70,7 @@ export default async function ContextSetup({ ip, token }: Request) {
 		educatorId: user.educator?.id,
 		studentId: user.student?.id,
 		requireAuth(statement = true) {
-			if (!statement) throw ApolloError(ERRORS.UNAUTHORIZED)
+			if (!statement) throw ApolloError('UNAUTHORIZED')
 		},
 		ip,
 	}
