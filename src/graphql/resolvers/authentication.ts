@@ -113,7 +113,6 @@ export default {
 					data: {
 						password: Hash(password),
 						role: student ? 'STUDENT' : 'EDUCATOR',
-						wallet: { create: {} },
 						student: !student
 							? undefined
 							: {

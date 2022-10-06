@@ -1,0 +1,56 @@
+extend type Query {
+	organization(where: OrganizationWhereUniqueInput!): Organization
+	organizations(
+		where: OrganizationWhereInput = {}
+		orderBy: [OrganizationOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Organization!]!
+	organizationsCount(where: OrganizationWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createOrganization(data: OrganizationCreateInput!): Organization
+	updateOrganization(where: OrganizationWhereUniqueInput!, data: OrganizationUpdateInput!): Organization
+	deleteOrganization(where: OrganizationWhereUniqueInput!): Organization
+}
+
+type Organization {
+	id: ID!
+
+	name: String!
+	nameAr: String
+	imageUrl: String!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input OrganizationWhereUniqueInput {
+	id: ID
+}
+
+input OrganizationWhereInput {
+	AND: [OrganizationWhereInput!]
+	OR: [OrganizationWhereInput!]
+	NOT: [OrganizationWhereInput!]
+	id: IDFilter
+}
+
+input OrganizationCreateInput {
+	name: String!
+	nameAr: String!
+	image: Upload!
+}
+
+input OrganizationUpdateInput {
+	name: String
+	nameAr: String
+	image: Upload
+}
+
+input OrganizationOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

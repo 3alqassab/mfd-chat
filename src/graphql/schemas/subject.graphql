@@ -31,7 +31,7 @@ type Subject {
 	major: Major
 
 	educators: [Educator!]
-	classes: [Class!]
+	courses: [Course!]
 
 	# University
 	year: Int
@@ -59,7 +59,7 @@ input SubjectCreateInput {
 	nameAr: String!
 	level: SubjectLevel!
 	tags: [String!]
-	majorId: ID
+	majorsIds: [ID!]
 
 	# University
 	year: Int
@@ -73,7 +73,7 @@ input SubjectUpdateInput {
 	nameAr: String
 	level: SubjectLevel
 	tags: [String!]
-	majorId: ID
+	majorsIds: [ID!]
 
 	# University
 	year: Int

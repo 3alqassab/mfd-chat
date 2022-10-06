@@ -1,0 +1,56 @@
+extend type Query {
+	course(where: CourseWhereUniqueInput!): Course
+	courses(
+		where: CourseWhereInput = {}
+		orderBy: [CourseOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Course!]!
+	coursesCount(where: CourseWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createCourse(data: CourseCreateInput!): Course
+	updateCourse(where: CourseWhereUniqueInput!, data: CourseUpdateInput!): Course
+	deleteCourse(where: CourseWhereUniqueInput!): Course
+}
+
+type Course {
+	id: ID!
+
+	name: String!
+	nameAr: String!
+	subject: Subject
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input CourseWhereUniqueInput {
+	id: ID
+}
+
+input CourseWhereInput {
+	AND: [CourseWhereInput!]
+	OR: [CourseWhereInput!]
+	NOT: [CourseWhereInput!]
+	id: IDFilter
+}
+
+input CourseCreateInput {
+	name: String!
+	nameAr: String!
+	subjectId: ID!
+}
+
+input CourseUpdateInput {
+	name: String
+	nameAr: String
+	subjectId: ID
+}
+
+input CourseOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

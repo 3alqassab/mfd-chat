@@ -13,13 +13,20 @@ const updateNotifications = async (database: PrismaClient, userId: string) => {
 
 export default {
 	Notification: {
-		async connection({ connectionId }, _, { database, requireAuth }) {
+		async connection({ connectionId }, _, { database, requireAuth, user }) {
 			requireAuth()
 
 			if (!connectionId) return null
 
-			return await database.connection.findUnique({
+			const connection = await database.connection.findUniqueOrThrow({
 				where: { id: connectionId },
+			})
+
+			return await database.user.findUnique({
+				where: {
+					id:
+						connection.user1 === user?.id ? connection.user2 : connection.user1,
+				},
 			})
 		},
 

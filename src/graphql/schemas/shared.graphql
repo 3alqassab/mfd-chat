@@ -9,86 +9,15 @@ enum Level {
 	OTHER
 }
 
-type Organization {
-	id: ID!
+# type Connection {
+# 	id: ID!
 
-	name: String!
-	nameAr: String
-	imageUrl: String!
+# 	user1: User
+# 	user2: User
 
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type Class {
-	id: ID!
-
-	thumbnailUrl: String
-	description: String
-	timings: [String!]
-	startTime: Date!
-	endTime: Date!
-	price: Float!
-	points: Int!
-
-	subject: Subject
-	educator: Educator
-
-	users: [User!]
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type Wallet {
-	id: ID!
-
-	points: Int!
-	purchases: [Purchase!]
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-enum PurchaseType {
-	POINTS
-	CLASS
-}
-
-type Purchase {
-	id: ID!
-
-	transactionId: Int!
-	type: PurchaseType!
-	points: Int
-	class: Class
-	wallet: Wallet!
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type College {
-	id: ID!
-
-	name: String!
-	nameAr: String
-
-	majors: [Major!]
-
-	createdAt: Date!
-	updatedAt: Date!
-}
-
-type Connection {
-	id: ID!
-
-	user1: User
-	user2: User
-
-	createdAt: Date!
-	updatedAt: Date!
-}
+# 	createdAt: Date!
+# 	updatedAt: Date!
+# }
 
 type LiveStream {
 	id: ID!

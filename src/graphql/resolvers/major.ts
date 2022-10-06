@@ -23,11 +23,9 @@ export default {
 			})
 		},
 
-		async subjects({ id }, _, { database, isAdmin }) {
-			if (!isAdmin) return []
-
+		async subjects({ id }, _, { database }) {
 			return await database.subject.findMany({
-				where: { major: { id } },
+				where: { majors: { some: { id } } },
 			})
 		},
 	},

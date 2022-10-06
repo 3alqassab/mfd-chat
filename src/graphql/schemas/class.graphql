@@ -1,0 +1,99 @@
+extend type Query {
+	class(where: ClassWhereUniqueInput!): Class
+	classes(
+		where: ClassWhereInput = {}
+		orderBy: [ClassOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Class!]!
+	classesCount(where: ClassWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createClass(data: ClassCreateInput!): Class
+	createMyClass(data: MyClassCreateInput!): Class
+	updateClass(where: ClassWhereUniqueInput!, data: ClassUpdateInput!): Class
+	updateMyClass(where: ClassWhereUniqueInput!, data: MyClassUpdateInput!): Class
+	deleteClass(where: ClassWhereUniqueInput!): Class
+}
+
+type Class {
+	id: ID!
+
+	thumbnailUrl: String
+	description: String
+	timings: [String!]
+	startTime: Date!
+	endTime: Date!
+	price: Float!
+	points: Int!
+	course: Course
+	educator: Educator
+	users: [User!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input ClassWhereUniqueInput {
+	id: ID
+}
+
+input ClassWhereInput {
+	AND: [ClassWhereInput!]
+	OR: [ClassWhereInput!]
+	NOT: [ClassWhereInput!]
+	id: IDFilter
+}
+
+input ClassCreateInput {
+	thumbnailUrl: String
+	description: String!
+	timings: [String!]!
+	startTime: Date!
+	endTime: Date!
+	price: Float!
+	points: Int!
+	courseId: ID!
+	educatorId: ID!
+}
+
+input ClassUpdateInput {
+	thumbnailUrl: String
+	description: String
+	timings: [String!]
+	startTime: Date
+	endTime: Date
+	price: Float
+	points: Int
+	courseId: ID!
+	educatorId: ID
+}
+
+input MyClassCreateInput {
+	thumbnailUrl: String
+	description: String!
+	timings: [String!]!
+	startTime: Date!
+	endTime: Date!
+	price: Float!
+	points: Int!
+	courseId: ID!
+}
+
+input MyClassUpdateInput {
+	thumbnailUrl: String
+	description: String
+	timings: [String!]
+	startTime: Date
+	endTime: Date
+	price: Float
+	points: Int
+	courseId: ID!
+}
+
+input ClassOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

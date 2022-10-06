@@ -11,7 +11,7 @@ type Notification {
 	id: ID!
 
 	type: NotificationType
-	connection: Connection
+	connection: User
 	liveStream: LiveStream
 
 	createdAt: Date!

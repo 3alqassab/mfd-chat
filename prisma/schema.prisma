@@ -106,13 +106,29 @@ model Purchase {
 
   type PurchaseType
 
-  points Int?
+  packageName   String?
+  packageNameAr String?
+  className     String?
+  classNameAr   String?
+  price         Float
+  points        Int?
 
   class   Class?  @relation(fields: [classId], references: [id])
   classId String?
 
   wallet   Wallet @relation(fields: [walletId], references: [id])
   walletId String
+}
+
+model Package {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  nameAr String
+  price  Float
+  points Int
 }
 
 enum Level {
@@ -270,11 +286,10 @@ model Subject {
   name   String
   nameAr String
 
-  level SubjectLevel
-  tags  String[]
+  levels SubjectLevel[]
+  tags   String[]
 
-  major   Major?  @relation(fields: [majorId], references: [id])
-  majorId String?
+  majors Major[]
 
   // University
   year Int?
@@ -283,7 +298,21 @@ model Subject {
   createdById String
 
   educators Educator[]
-  classes   Class[]
+  courses   Course[]
+}
+
+model Course {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  name   String
+  nameAr String
+
+  subject   Subject @relation(fields: [subjectId], references: [id])
+  subjectId String
+
+  classes Class[]
 }
 
 model ClassQuestion {
@@ -396,8 +425,8 @@ model Class {
   price        Float
   points       Int
 
-  subject   Subject? @relation(fields: [subjectId], references: [id], onDelete: SetNull)
-  subjectId String?
+  course   Course? @relation(fields: [courseId], references: [id], onDelete: SetNull)
+  courseId String?
 
   educator   Educator? @relation(fields: [educatorId], references: [id], onDelete: SetNull)
   educatorId String?

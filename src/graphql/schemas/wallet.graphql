@@ -1,0 +1,62 @@
+extend type Query {
+	myWallet: Wallet
+	wallets(
+		where: WalletWhereInput = {}
+		orderBy: [WalletOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Wallet!]!
+	walletsCount(where: WalletWhereInput = {}): Int
+}
+
+extend type Mutation {
+	purchasePackage(data: PurchasePackageInput!): Purchase!
+}
+
+enum PurchaseType {
+	POINTS
+	CLASS
+}
+
+type Purchase {
+	id: ID!
+	packageName: String
+	packageNameAr: String
+	className: String
+	classNameAr: String
+	price: Float!
+	points: Int
+	class: Class
+	transactionId: Int!
+	wallet: Wallet
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+type Wallet {
+	id: ID!
+
+	points: Int!
+	purchases: [Purchase!]
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input WalletWhereInput {
+	AND: [WalletWhereInput!]
+	OR: [WalletWhereInput!]
+	NOT: [WalletWhereInput!]
+	id: IDFilter
+}
+
+input PurchasePackageInput {
+	packageId: ID!
+}
+
+input WalletOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

@@ -1,0 +1,59 @@
+extend type Query {
+	package(where: PackageWhereUniqueInput!): Package
+	packages(
+		where: PackageWhereInput = {}
+		orderBy: [PackageOrderByInput!] = [{ createdAt: "desc" }]
+		take: Int = 10
+		skip: Int = 0
+	): [Package!]!
+	packagesCount(where: PackageWhereInput = {}): Int
+}
+
+extend type Mutation {
+	createPackage(data: PackageCreateInput!): Package
+	updatePackage(where: PackageWhereUniqueInput!, data: PackageUpdateInput!): Package
+	deletePackage(where: PackageWhereUniqueInput!): Package
+}
+
+type Package {
+	id: ID!
+
+	name: String!
+	nameAr: String!
+	price: Float!
+	points: Int!
+
+	createdAt: Date!
+	updatedAt: Date!
+}
+
+input PackageWhereUniqueInput {
+	id: ID
+}
+
+input PackageWhereInput {
+	AND: [PackageWhereInput!]
+	OR: [PackageWhereInput!]
+	NOT: [PackageWhereInput!]
+	id: IDFilter
+}
+
+input PackageCreateInput {
+	name: String!
+	nameAr: String!
+	price: Float!
+	points: Int!
+}
+
+input PackageUpdateInput {
+	name: String
+	nameAr: String
+	price: Float
+	points: Int
+}
+
+input PackageOrderByInput {
+	id: OrderDirection
+
+	createdAt: OrderDirection
+}

@@ -1,3 +1,4 @@
+import { ApolloError } from '../../functions/errors'
 import { Prisma } from '@prisma/client'
 import { Resolvers } from '../../gql-types'
 import {
@@ -86,12 +87,14 @@ export default {
 		async wallet({ id }, __, { database, requireAuth, isAdmin, user }) {
 			requireAuth(isAdmin || user?.id === id)
 
-			return await database.wallet.findUniqueOrThrow({
+			return await database.wallet.upsert({
 				where: { userId: id },
+				create: { user: { connect: { id } } },
+				update: {},
 			})
 		},
 
-		async connections({ id }, __, { database, user, requireAuth }) {
+		async isConnected({ id }, __, { database, user, requireAuth }) {
 			const isConnected = await database.connection.findFirst({
 				where: {
 					OR: [
@@ -101,11 +104,7 @@ export default {
 				},
 			})
 
-			requireAuth(!!isConnected || user?.id === id)
-
-			return await database.connection.findMany({
-				where: { OR: [{ user1: id }, { user2: id }] },
-			})
+			return !!isConnected
 		},
 	},
 
@@ -224,6 +223,42 @@ export default {
 			requireAuth(isAdmin)
 
 			return await database.user.delete(input)
+		},
+
+		async toggleConnectionWithUser(
+			_,
+			{ where: { id } },
+			{ database, requireAuth, user },
+		) {
+			requireAuth()
+
+			if (user?.id === id)
+				throw ApolloError('MALFORMED_INPUT', 'You cannot connect with yourself')
+
+			const isConnected = await database.connection.findFirst({
+				where: {
+					OR: [
+						{ user1: id, user2: user?.id },
+						{ user1: user?.id, user2: id },
+					],
+				},
+			})
+
+			if (isConnected)
+				await database.connection.deleteMany({
+					where: {
+						OR: [
+							{ user1: id, user2: user?.id },
+							{ user1: user?.id, user2: id },
+						],
+					},
+				})
+			else
+				await database.connection.create({
+					data: { user1: user!.id, user2: id },
+				})
+
+			return true
 		},
 	},
 } as Resolvers

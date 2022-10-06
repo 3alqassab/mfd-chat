@@ -172,6 +172,7 @@ export type CheckEmailInput = {
 
 export type Class = {
   __typename?: 'Class';
+  course?: Maybe<Course>;
   createdAt: Scalars['Date'];
   description?: Maybe<Scalars['String']>;
   educator?: Maybe<Educator>;
@@ -180,11 +181,50 @@ export type Class = {
   points: Scalars['Int'];
   price: Scalars['Float'];
   startTime: Scalars['Date'];
-  subject?: Maybe<Subject>;
   thumbnailUrl?: Maybe<Scalars['String']>;
   timings?: Maybe<Array<Scalars['String']>>;
   updatedAt: Scalars['Date'];
   users?: Maybe<Array<User>>;
+};
+
+export type ClassCreateInput = {
+  courseId: Scalars['ID'];
+  description: Scalars['String'];
+  educatorId: Scalars['ID'];
+  endTime: Scalars['Date'];
+  points: Scalars['Int'];
+  price: Scalars['Float'];
+  startTime: Scalars['Date'];
+  thumbnailUrl?: InputMaybe<Scalars['String']>;
+  timings: Array<Scalars['String']>;
+};
+
+export type ClassOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type ClassUpdateInput = {
+  courseId: Scalars['ID'];
+  description?: InputMaybe<Scalars['String']>;
+  educatorId?: InputMaybe<Scalars['ID']>;
+  endTime?: InputMaybe<Scalars['Date']>;
+  points?: InputMaybe<Scalars['Int']>;
+  price?: InputMaybe<Scalars['Float']>;
+  startTime?: InputMaybe<Scalars['Date']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']>;
+  timings?: InputMaybe<Array<Scalars['String']>>;
+};
+
+export type ClassWhereInput = {
+  AND?: InputMaybe<Array<ClassWhereInput>>;
+  NOT?: InputMaybe<Array<ClassWhereInput>>;
+  OR?: InputMaybe<Array<ClassWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type ClassWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 export type College = {
@@ -194,16 +234,73 @@ export type College = {
   majors?: Maybe<Array<Major>>;
   name: Scalars['String'];
   nameAr?: Maybe<Scalars['String']>;
+  students?: Maybe<Array<Student>>;
+  universities?: Maybe<Array<University>>;
   updatedAt: Scalars['Date'];
 };
 
-export type Connection = {
-  __typename?: 'Connection';
+export type CollegeCreateInput = {
+  name: Scalars['String'];
+  nameAr: Scalars['String'];
+};
+
+export type CollegeOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type CollegeUpdateInput = {
+  name?: InputMaybe<Scalars['String']>;
+  nameAr?: InputMaybe<Scalars['String']>;
+};
+
+export type CollegeWhereInput = {
+  AND?: InputMaybe<Array<CollegeWhereInput>>;
+  NOT?: InputMaybe<Array<CollegeWhereInput>>;
+  OR?: InputMaybe<Array<CollegeWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type CollegeWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+export type Course = {
+  __typename?: 'Course';
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
+  name: Scalars['String'];
+  nameAr: Scalars['String'];
+  subject?: Maybe<Subject>;
   updatedAt: Scalars['Date'];
-  user1?: Maybe<User>;
-  user2?: Maybe<User>;
+};
+
+export type CourseCreateInput = {
+  name: Scalars['String'];
+  nameAr: Scalars['String'];
+  subjectId: Scalars['ID'];
+};
+
+export type CourseOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type CourseUpdateInput = {
+  name?: InputMaybe<Scalars['String']>;
+  nameAr?: InputMaybe<Scalars['String']>;
+  subjectId?: InputMaybe<Scalars['ID']>;
+};
+
+export type CourseWhereInput = {
+  AND?: InputMaybe<Array<CourseWhereInput>>;
+  NOT?: InputMaybe<Array<CourseWhereInput>>;
+  OR?: InputMaybe<Array<CourseWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type CourseWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
 };
 
 export type Educator = {
@@ -358,29 +455,48 @@ export type Mutation = {
   __typename?: 'Mutation';
   adminMessageToggleIsRead?: Maybe<AdminMessage>;
   createAd?: Maybe<Ad>;
+  createClass?: Maybe<Class>;
+  createCollege?: Maybe<College>;
+  createCourse?: Maybe<Course>;
   createGrade?: Maybe<Grade>;
   createMajor?: Maybe<Major>;
+  createMyClass?: Maybe<Class>;
+  createOrganization?: Maybe<Organization>;
+  createPackage?: Maybe<Package>;
   createSchool?: Maybe<School>;
   createSubject?: Maybe<Subject>;
   createUniversity?: Maybe<University>;
   createUser?: Maybe<User>;
   deleteAd?: Maybe<Ad>;
   deleteAdminMessage?: Maybe<AdminMessage>;
+  deleteClass?: Maybe<Class>;
+  deleteCollege?: Maybe<College>;
+  deleteCourse?: Maybe<Course>;
   deleteGrade?: Maybe<Grade>;
   deleteMajor?: Maybe<Major>;
+  deleteOrganization?: Maybe<Organization>;
+  deletePackage?: Maybe<Package>;
   deleteSchool?: Maybe<School>;
   deleteSubject?: Maybe<Subject>;
   deleteUniversity?: Maybe<University>;
   deleteUser?: Maybe<User>;
+  purchasePackage: Purchase;
   register?: Maybe<Authentication>;
   requestPasswordReset?: Maybe<Scalars['Boolean']>;
   resetPassword?: Maybe<Authentication>;
   sendAdminMessage?: Maybe<AdminMessage>;
   sendMessageToChat: ChatMessage;
+  toggleConnectionWithUser?: Maybe<Scalars['Boolean']>;
   updateAd?: Maybe<Ad>;
+  updateClass?: Maybe<Class>;
+  updateCollege?: Maybe<College>;
+  updateCourse?: Maybe<Course>;
   updateGrade?: Maybe<Grade>;
   updateMajor?: Maybe<Major>;
+  updateMyClass?: Maybe<Class>;
   updateMyUser?: Maybe<User>;
+  updateOrganization?: Maybe<Organization>;
+  updatePackage?: Maybe<Package>;
   updateSchool?: Maybe<School>;
   updateSubject?: Maybe<Subject>;
   updateUniversity?: Maybe<University>;
@@ -398,6 +514,21 @@ export type MutationCreateAdArgs = {
 };
 
 
+export type MutationCreateClassArgs = {
+  data: ClassCreateInput;
+};
+
+
+export type MutationCreateCollegeArgs = {
+  data: CollegeCreateInput;
+};
+
+
+export type MutationCreateCourseArgs = {
+  data: CourseCreateInput;
+};
+
+
 export type MutationCreateGradeArgs = {
   data: GradeCreateInput;
 };
@@ -405,6 +536,21 @@ export type MutationCreateGradeArgs = {
 
 export type MutationCreateMajorArgs = {
   data: MajorCreateInput;
+};
+
+
+export type MutationCreateMyClassArgs = {
+  data: MyClassCreateInput;
+};
+
+
+export type MutationCreateOrganizationArgs = {
+  data: OrganizationCreateInput;
+};
+
+
+export type MutationCreatePackageArgs = {
+  data: PackageCreateInput;
 };
 
 
@@ -438,6 +584,21 @@ export type MutationDeleteAdminMessageArgs = {
 };
 
 
+export type MutationDeleteClassArgs = {
+  where: ClassWhereUniqueInput;
+};
+
+
+export type MutationDeleteCollegeArgs = {
+  where: CollegeWhereUniqueInput;
+};
+
+
+export type MutationDeleteCourseArgs = {
+  where: CourseWhereUniqueInput;
+};
+
+
 export type MutationDeleteGradeArgs = {
   where: GradeWhereUniqueInput;
 };
@@ -445,6 +606,16 @@ export type MutationDeleteGradeArgs = {
 
 export type MutationDeleteMajorArgs = {
   where: MajorWhereUniqueInput;
+};
+
+
+export type MutationDeleteOrganizationArgs = {
+  where: OrganizationWhereUniqueInput;
+};
+
+
+export type MutationDeletePackageArgs = {
+  where: PackageWhereUniqueInput;
 };
 
 
@@ -465,6 +636,11 @@ export type MutationDeleteUniversityArgs = {
 
 export type MutationDeleteUserArgs = {
   where: UserWhereUniqueInput;
+};
+
+
+export type MutationPurchasePackageArgs = {
+  data: PurchasePackageInput;
 };
 
 
@@ -493,9 +669,32 @@ export type MutationSendMessageToChatArgs = {
 };
 
 
+export type MutationToggleConnectionWithUserArgs = {
+  where: ToggleConnectionWithUserInput;
+};
+
+
 export type MutationUpdateAdArgs = {
   data: AdUpdateInput;
   where: AdWhereUniqueInput;
+};
+
+
+export type MutationUpdateClassArgs = {
+  data: ClassUpdateInput;
+  where: ClassWhereUniqueInput;
+};
+
+
+export type MutationUpdateCollegeArgs = {
+  data: CollegeUpdateInput;
+  where: CollegeWhereUniqueInput;
+};
+
+
+export type MutationUpdateCourseArgs = {
+  data: CourseUpdateInput;
+  where: CourseWhereUniqueInput;
 };
 
 
@@ -511,8 +710,26 @@ export type MutationUpdateMajorArgs = {
 };
 
 
+export type MutationUpdateMyClassArgs = {
+  data: MyClassUpdateInput;
+  where: ClassWhereUniqueInput;
+};
+
+
 export type MutationUpdateMyUserArgs = {
   data: MyUserUpdateInput;
+};
+
+
+export type MutationUpdateOrganizationArgs = {
+  data: OrganizationUpdateInput;
+  where: OrganizationWhereUniqueInput;
+};
+
+
+export type MutationUpdatePackageArgs = {
+  data: PackageUpdateInput;
+  where: PackageWhereUniqueInput;
 };
 
 
@@ -539,6 +756,28 @@ export type MutationUpdateUserArgs = {
   where: UserWhereUniqueInput;
 };
 
+export type MyClassCreateInput = {
+  courseId: Scalars['ID'];
+  description: Scalars['String'];
+  endTime: Scalars['Date'];
+  points: Scalars['Int'];
+  price: Scalars['Float'];
+  startTime: Scalars['Date'];
+  thumbnailUrl?: InputMaybe<Scalars['String']>;
+  timings: Array<Scalars['String']>;
+};
+
+export type MyClassUpdateInput = {
+  courseId: Scalars['ID'];
+  description?: InputMaybe<Scalars['String']>;
+  endTime?: InputMaybe<Scalars['Date']>;
+  points?: InputMaybe<Scalars['Int']>;
+  price?: InputMaybe<Scalars['Float']>;
+  startTime?: InputMaybe<Scalars['Date']>;
+  thumbnailUrl?: InputMaybe<Scalars['String']>;
+  timings?: InputMaybe<Array<Scalars['String']>>;
+};
+
 export type MyUserUpdateInput = {
   email?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
@@ -563,7 +802,7 @@ export type NestedStringNullableFilter = {
 
 export type Notification = {
   __typename?: 'Notification';
-  connection?: Maybe<Connection>;
+  connection?: Maybe<User>;
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
   liveStream?: Maybe<LiveStream>;
@@ -601,16 +840,93 @@ export type Organization = {
   updatedAt: Scalars['Date'];
 };
 
+export type OrganizationCreateInput = {
+  image: Scalars['Upload'];
+  name: Scalars['String'];
+  nameAr: Scalars['String'];
+};
+
+export type OrganizationOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type OrganizationUpdateInput = {
+  image?: InputMaybe<Scalars['Upload']>;
+  name?: InputMaybe<Scalars['String']>;
+  nameAr?: InputMaybe<Scalars['String']>;
+};
+
+export type OrganizationWhereInput = {
+  AND?: InputMaybe<Array<OrganizationWhereInput>>;
+  NOT?: InputMaybe<Array<OrganizationWhereInput>>;
+  OR?: InputMaybe<Array<OrganizationWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type OrganizationWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+export type Package = {
+  __typename?: 'Package';
+  createdAt: Scalars['Date'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  nameAr: Scalars['String'];
+  points: Scalars['Int'];
+  price: Scalars['Float'];
+  updatedAt: Scalars['Date'];
+};
+
+export type PackageCreateInput = {
+  name: Scalars['String'];
+  nameAr: Scalars['String'];
+  points: Scalars['Int'];
+  price: Scalars['Float'];
+};
+
+export type PackageOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type PackageUpdateInput = {
+  name?: InputMaybe<Scalars['String']>;
+  nameAr?: InputMaybe<Scalars['String']>;
+  points?: InputMaybe<Scalars['Int']>;
+  price?: InputMaybe<Scalars['Float']>;
+};
+
+export type PackageWhereInput = {
+  AND?: InputMaybe<Array<PackageWhereInput>>;
+  NOT?: InputMaybe<Array<PackageWhereInput>>;
+  OR?: InputMaybe<Array<PackageWhereInput>>;
+  id?: InputMaybe<IdFilter>;
+};
+
+export type PackageWhereUniqueInput = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
 export type Purchase = {
   __typename?: 'Purchase';
   class?: Maybe<Class>;
+  className?: Maybe<Scalars['String']>;
+  classNameAr?: Maybe<Scalars['String']>;
   createdAt: Scalars['Date'];
   id: Scalars['ID'];
+  packageName?: Maybe<Scalars['String']>;
+  packageNameAr?: Maybe<Scalars['String']>;
   points?: Maybe<Scalars['Int']>;
+  price: Scalars['Float'];
   transactionId: Scalars['Int'];
-  type: PurchaseType;
   updatedAt: Scalars['Date'];
-  wallet: Wallet;
+  wallet?: Maybe<Wallet>;
+};
+
+export type PurchasePackageInput = {
+  packageId: Scalars['ID'];
 };
 
 export type PurchaseType =
@@ -628,6 +944,15 @@ export type Query = {
   chats: Array<Chat>;
   chatsCount?: Maybe<Scalars['Int']>;
   checkEmail?: Maybe<Scalars['Boolean']>;
+  class?: Maybe<Class>;
+  classes: Array<Class>;
+  classesCount?: Maybe<Scalars['Int']>;
+  college?: Maybe<College>;
+  colleges: Array<College>;
+  collegesCount?: Maybe<Scalars['Int']>;
+  course?: Maybe<Course>;
+  courses: Array<Course>;
+  coursesCount?: Maybe<Scalars['Int']>;
   grade?: Maybe<Grade>;
   grades: Array<Grade>;
   gradesCount?: Maybe<Scalars['Int']>;
@@ -636,6 +961,13 @@ export type Query = {
   majors: Array<Major>;
   majorsCount?: Maybe<Scalars['Int']>;
   myUser?: Maybe<User>;
+  myWallet?: Maybe<Wallet>;
+  organization?: Maybe<Organization>;
+  organizations: Array<Organization>;
+  organizationsCount?: Maybe<Scalars['Int']>;
+  package?: Maybe<Package>;
+  packages: Array<Package>;
+  packagesCount?: Maybe<Scalars['Int']>;
   school?: Maybe<School>;
   schools: Array<School>;
   schoolsCount?: Maybe<Scalars['Int']>;
@@ -648,6 +980,8 @@ export type Query = {
   user?: Maybe<User>;
   users: Array<User>;
   usersCount?: Maybe<Scalars['Int']>;
+  wallets: Array<Wallet>;
+  walletsCount?: Maybe<Scalars['Int']>;
 };
 
 
@@ -705,6 +1039,60 @@ export type QueryCheckEmailArgs = {
 };
 
 
+export type QueryClassArgs = {
+  where: ClassWhereUniqueInput;
+};
+
+
+export type QueryClassesArgs = {
+  orderBy?: InputMaybe<Array<ClassOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<ClassWhereInput>;
+};
+
+
+export type QueryClassesCountArgs = {
+  where?: InputMaybe<ClassWhereInput>;
+};
+
+
+export type QueryCollegeArgs = {
+  where: CollegeWhereUniqueInput;
+};
+
+
+export type QueryCollegesArgs = {
+  orderBy?: InputMaybe<Array<CollegeOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CollegeWhereInput>;
+};
+
+
+export type QueryCollegesCountArgs = {
+  where?: InputMaybe<CollegeWhereInput>;
+};
+
+
+export type QueryCourseArgs = {
+  where: CourseWhereUniqueInput;
+};
+
+
+export type QueryCoursesArgs = {
+  orderBy?: InputMaybe<Array<CourseOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<CourseWhereInput>;
+};
+
+
+export type QueryCoursesCountArgs = {
+  where?: InputMaybe<CourseWhereInput>;
+};
+
+
 export type QueryGradeArgs = {
   where: GradeWhereUniqueInput;
 };
@@ -743,6 +1131,42 @@ export type QueryMajorsArgs = {
 
 export type QueryMajorsCountArgs = {
   where?: InputMaybe<MajorWhereInput>;
+};
+
+
+export type QueryOrganizationArgs = {
+  where: OrganizationWhereUniqueInput;
+};
+
+
+export type QueryOrganizationsArgs = {
+  orderBy?: InputMaybe<Array<OrganizationOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<OrganizationWhereInput>;
+};
+
+
+export type QueryOrganizationsCountArgs = {
+  where?: InputMaybe<OrganizationWhereInput>;
+};
+
+
+export type QueryPackageArgs = {
+  where: PackageWhereUniqueInput;
+};
+
+
+export type QueryPackagesArgs = {
+  orderBy?: InputMaybe<Array<PackageOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<PackageWhereInput>;
+};
+
+
+export type QueryPackagesCountArgs = {
+  where?: InputMaybe<PackageWhereInput>;
 };
 
 
@@ -815,6 +1239,19 @@ export type QueryUsersArgs = {
 
 export type QueryUsersCountArgs = {
   where?: InputMaybe<UserWhereInput>;
+};
+
+
+export type QueryWalletsArgs = {
+  orderBy?: InputMaybe<Array<WalletOrderByInput>>;
+  skip?: InputMaybe<Scalars['Int']>;
+  take?: InputMaybe<Scalars['Int']>;
+  where?: InputMaybe<WalletWhereInput>;
+};
+
+
+export type QueryWalletsCountArgs = {
+  where?: InputMaybe<WalletWhereInput>;
 };
 
 export type QueryMode =
@@ -933,7 +1370,7 @@ export type StudentRegistrationInput = {
 
 export type Subject = {
   __typename?: 'Subject';
-  classes?: Maybe<Array<Class>>;
+  courses?: Maybe<Array<Course>>;
   createdAt: Scalars['Date'];
   createdBy?: Maybe<Organization>;
   educators?: Maybe<Array<Educator>>;
@@ -951,7 +1388,7 @@ export type Subject = {
 export type SubjectCreateInput = {
   createdById?: InputMaybe<Scalars['ID']>;
   level: SubjectLevel;
-  majorId?: InputMaybe<Scalars['ID']>;
+  majorsIds?: InputMaybe<Array<Scalars['ID']>>;
   name: Scalars['String'];
   nameAr: Scalars['String'];
   tags?: InputMaybe<Array<Scalars['String']>>;
@@ -971,7 +1408,7 @@ export type SubjectOrderByInput = {
 export type SubjectUpdateInput = {
   createdById?: InputMaybe<Scalars['ID']>;
   level?: InputMaybe<SubjectLevel>;
-  majorId?: InputMaybe<Scalars['ID']>;
+  majorsIds?: InputMaybe<Array<Scalars['ID']>>;
   name?: InputMaybe<Scalars['String']>;
   nameAr?: InputMaybe<Scalars['String']>;
   tags?: InputMaybe<Array<Scalars['String']>>;
@@ -1000,6 +1437,10 @@ export type Subscription = {
 
 export type SubscriptionChatArgs = {
   where: ChatWhereUniqueInput;
+};
+
+export type ToggleConnectionWithUserInput = {
+  id: Scalars['ID'];
 };
 
 export type University = {
@@ -1047,13 +1488,13 @@ export type UniversityWhereUniqueInput = {
 
 export type User = {
   __typename?: 'User';
-  connections?: Maybe<Array<Connection>>;
   createdAt: Scalars['Date'];
   educator?: Maybe<Educator>;
   email: Scalars['String'];
   firstName: Scalars['String'];
   gender: Gender;
   id: Scalars['ID'];
+  isConnected?: Maybe<Scalars['Boolean']>;
   lastName: Scalars['String'];
   mobile: Scalars['String'];
   password: Scalars['String'];
@@ -1124,6 +1565,18 @@ export type Wallet = {
   points: Scalars['Int'];
   purchases?: Maybe<Array<Purchase>>;
   updatedAt: Scalars['Date'];
+};
+
+export type WalletOrderByInput = {
+  createdAt?: InputMaybe<OrderDirection>;
+  id?: InputMaybe<OrderDirection>;
+};
+
+export type WalletWhereInput = {
+  AND?: InputMaybe<Array<WalletWhereInput>>;
+  NOT?: InputMaybe<Array<WalletWhereInput>>;
+  OR?: InputMaybe<Array<WalletWhereInput>>;
+  id?: InputMaybe<IdFilter>;
 };
 
 
@@ -1217,8 +1670,23 @@ export type ResolversTypes = {
   ChatWhereUniqueInput: ChatWhereUniqueInput;
   CheckEmailInput: CheckEmailInput;
   Class: ResolverTypeWrapper<ClassModel>;
-  College: ResolverTypeWrapper<Omit<College, 'majors'> & { majors?: Maybe<Array<ResolversTypes['Major']>> }>;
-  Connection: ResolverTypeWrapper<ConnectionModel>;
+  ClassCreateInput: ClassCreateInput;
+  ClassOrderByInput: ClassOrderByInput;
+  ClassUpdateInput: ClassUpdateInput;
+  ClassWhereInput: ClassWhereInput;
+  ClassWhereUniqueInput: ClassWhereUniqueInput;
+  College: ResolverTypeWrapper<Omit<College, 'majors' | 'students' | 'universities'> & { majors?: Maybe<Array<ResolversTypes['Major']>>, students?: Maybe<Array<ResolversTypes['Student']>>, universities?: Maybe<Array<ResolversTypes['University']>> }>;
+  CollegeCreateInput: CollegeCreateInput;
+  CollegeOrderByInput: CollegeOrderByInput;
+  CollegeUpdateInput: CollegeUpdateInput;
+  CollegeWhereInput: CollegeWhereInput;
+  CollegeWhereUniqueInput: CollegeWhereUniqueInput;
+  Course: ResolverTypeWrapper<Omit<Course, 'subject'> & { subject?: Maybe<ResolversTypes['Subject']> }>;
+  CourseCreateInput: CourseCreateInput;
+  CourseOrderByInput: CourseOrderByInput;
+  CourseUpdateInput: CourseUpdateInput;
+  CourseWhereInput: CourseWhereInput;
+  CourseWhereUniqueInput: CourseWhereUniqueInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   Educator: ResolverTypeWrapper<EducatorModel>;
   EducatorRegistrationInput: EducatorRegistrationInput;
@@ -1245,6 +1713,8 @@ export type ResolversTypes = {
   MajorWhereUniqueInput: MajorWhereUniqueInput;
   MessageCreateInput: MessageCreateInput;
   Mutation: ResolverTypeWrapper<{}>;
+  MyClassCreateInput: MyClassCreateInput;
+  MyClassUpdateInput: MyClassUpdateInput;
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
   Notification: ResolverTypeWrapper<NotificationModel>;
@@ -1256,7 +1726,19 @@ export type ResolversTypes = {
   NullableString: ResolverTypeWrapper<Scalars['NullableString']>;
   OrderDirection: OrderDirection;
   Organization: ResolverTypeWrapper<OrganizationModel>;
+  OrganizationCreateInput: OrganizationCreateInput;
+  OrganizationOrderByInput: OrganizationOrderByInput;
+  OrganizationUpdateInput: OrganizationUpdateInput;
+  OrganizationWhereInput: OrganizationWhereInput;
+  OrganizationWhereUniqueInput: OrganizationWhereUniqueInput;
+  Package: ResolverTypeWrapper<Package>;
+  PackageCreateInput: PackageCreateInput;
+  PackageOrderByInput: PackageOrderByInput;
+  PackageUpdateInput: PackageUpdateInput;
+  PackageWhereInput: PackageWhereInput;
+  PackageWhereUniqueInput: PackageWhereUniqueInput;
   Purchase: ResolverTypeWrapper<PurchaseModel>;
+  PurchasePackageInput: PurchasePackageInput;
   PurchaseType: PurchaseType;
   Query: ResolverTypeWrapper<{}>;
   QueryMode: QueryMode;
@@ -1283,6 +1765,7 @@ export type ResolversTypes = {
   SubjectWhereInput: SubjectWhereInput;
   SubjectWhereUniqueInput: SubjectWhereUniqueInput;
   Subscription: ResolverTypeWrapper<{}>;
+  ToggleConnectionWithUserInput: ToggleConnectionWithUserInput;
   University: ResolverTypeWrapper<UniversityModel>;
   UniversityCreateInput: UniversityCreateInput;
   UniversityOrderByInput: UniversityOrderByInput;
@@ -1299,6 +1782,8 @@ export type ResolversTypes = {
   UserWhereInput: UserWhereInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Wallet: ResolverTypeWrapper<WalletModel>;
+  WalletOrderByInput: WalletOrderByInput;
+  WalletWhereInput: WalletWhereInput;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -1324,8 +1809,23 @@ export type ResolversParentTypes = {
   ChatWhereUniqueInput: ChatWhereUniqueInput;
   CheckEmailInput: CheckEmailInput;
   Class: ClassModel;
-  College: Omit<College, 'majors'> & { majors?: Maybe<Array<ResolversParentTypes['Major']>> };
-  Connection: ConnectionModel;
+  ClassCreateInput: ClassCreateInput;
+  ClassOrderByInput: ClassOrderByInput;
+  ClassUpdateInput: ClassUpdateInput;
+  ClassWhereInput: ClassWhereInput;
+  ClassWhereUniqueInput: ClassWhereUniqueInput;
+  College: Omit<College, 'majors' | 'students' | 'universities'> & { majors?: Maybe<Array<ResolversParentTypes['Major']>>, students?: Maybe<Array<ResolversParentTypes['Student']>>, universities?: Maybe<Array<ResolversParentTypes['University']>> };
+  CollegeCreateInput: CollegeCreateInput;
+  CollegeOrderByInput: CollegeOrderByInput;
+  CollegeUpdateInput: CollegeUpdateInput;
+  CollegeWhereInput: CollegeWhereInput;
+  CollegeWhereUniqueInput: CollegeWhereUniqueInput;
+  Course: Omit<Course, 'subject'> & { subject?: Maybe<ResolversParentTypes['Subject']> };
+  CourseCreateInput: CourseCreateInput;
+  CourseOrderByInput: CourseOrderByInput;
+  CourseUpdateInput: CourseUpdateInput;
+  CourseWhereInput: CourseWhereInput;
+  CourseWhereUniqueInput: CourseWhereUniqueInput;
   Date: Scalars['Date'];
   Educator: EducatorModel;
   EducatorRegistrationInput: EducatorRegistrationInput;
@@ -1349,6 +1849,8 @@ export type ResolversParentTypes = {
   MajorWhereUniqueInput: MajorWhereUniqueInput;
   MessageCreateInput: MessageCreateInput;
   Mutation: {};
+  MyClassCreateInput: MyClassCreateInput;
+  MyClassUpdateInput: MyClassUpdateInput;
   MyUserUpdateInput: MyUserUpdateInput;
   NestedStringNullableFilter: NestedStringNullableFilter;
   Notification: NotificationModel;
@@ -1358,7 +1860,19 @@ export type ResolversParentTypes = {
   NullableID: Scalars['NullableID'];
   NullableString: Scalars['NullableString'];
   Organization: OrganizationModel;
+  OrganizationCreateInput: OrganizationCreateInput;
+  OrganizationOrderByInput: OrganizationOrderByInput;
+  OrganizationUpdateInput: OrganizationUpdateInput;
+  OrganizationWhereInput: OrganizationWhereInput;
+  OrganizationWhereUniqueInput: OrganizationWhereUniqueInput;
+  Package: Package;
+  PackageCreateInput: PackageCreateInput;
+  PackageOrderByInput: PackageOrderByInput;
+  PackageUpdateInput: PackageUpdateInput;
+  PackageWhereInput: PackageWhereInput;
+  PackageWhereUniqueInput: PackageWhereUniqueInput;
   Purchase: PurchaseModel;
+  PurchasePackageInput: PurchasePackageInput;
   Query: {};
   RefreshTokenInput: RefreshTokenInput;
   RegistrationInput: RegistrationInput;
@@ -1382,6 +1896,7 @@ export type ResolversParentTypes = {
   SubjectWhereInput: SubjectWhereInput;
   SubjectWhereUniqueInput: SubjectWhereUniqueInput;
   Subscription: {};
+  ToggleConnectionWithUserInput: ToggleConnectionWithUserInput;
   University: UniversityModel;
   UniversityCreateInput: UniversityCreateInput;
   UniversityOrderByInput: UniversityOrderByInput;
@@ -1397,6 +1912,8 @@ export type ResolversParentTypes = {
   UserWhereInput: UserWhereInput;
   UserWhereUniqueInput: UserWhereUniqueInput;
   Wallet: WalletModel;
+  WalletOrderByInput: WalletOrderByInput;
+  WalletWhereInput: WalletWhereInput;
 };
 
 export type AdResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Ad'] = ResolversParentTypes['Ad']> = {
@@ -1450,6 +1967,7 @@ export type ChatMessageResolvers<ContextType = Context, ParentType extends Resol
 };
 
 export type ClassResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Class'] = ResolversParentTypes['Class']> = {
+  course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   description?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   educator?: Resolver<Maybe<ResolversTypes['Educator']>, ParentType, ContextType>;
@@ -1458,7 +1976,6 @@ export type ClassResolvers<ContextType = Context, ParentType extends ResolversPa
   points?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   startTime?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   thumbnailUrl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   timings?: Resolver<Maybe<Array<ResolversTypes['String']>>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
@@ -1472,16 +1989,19 @@ export type CollegeResolvers<ContextType = Context, ParentType extends Resolvers
   majors?: Resolver<Maybe<Array<ResolversTypes['Major']>>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   nameAr?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  students?: Resolver<Maybe<Array<ResolversTypes['Student']>>, ParentType, ContextType>;
+  universities?: Resolver<Maybe<Array<ResolversTypes['University']>>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type ConnectionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Connection'] = ResolversParentTypes['Connection']> = {
+export type CourseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Course'] = ResolversParentTypes['Course']> = {
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nameAr?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  subject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  user1?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-  user2?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1541,29 +2061,48 @@ export type MajorResolvers<ContextType = Context, ParentType extends ResolversPa
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   adminMessageToggleIsRead?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<MutationAdminMessageToggleIsReadArgs, 'where'>>;
   createAd?: Resolver<Maybe<ResolversTypes['Ad']>, ParentType, ContextType, RequireFields<MutationCreateAdArgs, 'data'>>;
+  createClass?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<MutationCreateClassArgs, 'data'>>;
+  createCollege?: Resolver<Maybe<ResolversTypes['College']>, ParentType, ContextType, RequireFields<MutationCreateCollegeArgs, 'data'>>;
+  createCourse?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<MutationCreateCourseArgs, 'data'>>;
   createGrade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<MutationCreateGradeArgs, 'data'>>;
   createMajor?: Resolver<Maybe<ResolversTypes['Major']>, ParentType, ContextType, RequireFields<MutationCreateMajorArgs, 'data'>>;
+  createMyClass?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<MutationCreateMyClassArgs, 'data'>>;
+  createOrganization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<MutationCreateOrganizationArgs, 'data'>>;
+  createPackage?: Resolver<Maybe<ResolversTypes['Package']>, ParentType, ContextType, RequireFields<MutationCreatePackageArgs, 'data'>>;
   createSchool?: Resolver<Maybe<ResolversTypes['School']>, ParentType, ContextType, RequireFields<MutationCreateSchoolArgs, 'data'>>;
   createSubject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<MutationCreateSubjectArgs, 'data'>>;
   createUniversity?: Resolver<Maybe<ResolversTypes['University']>, ParentType, ContextType, RequireFields<MutationCreateUniversityArgs, 'data'>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'data'>>;
   deleteAd?: Resolver<Maybe<ResolversTypes['Ad']>, ParentType, ContextType, RequireFields<MutationDeleteAdArgs, 'where'>>;
   deleteAdminMessage?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<MutationDeleteAdminMessageArgs, 'where'>>;
+  deleteClass?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<MutationDeleteClassArgs, 'where'>>;
+  deleteCollege?: Resolver<Maybe<ResolversTypes['College']>, ParentType, ContextType, RequireFields<MutationDeleteCollegeArgs, 'where'>>;
+  deleteCourse?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<MutationDeleteCourseArgs, 'where'>>;
   deleteGrade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<MutationDeleteGradeArgs, 'where'>>;
   deleteMajor?: Resolver<Maybe<ResolversTypes['Major']>, ParentType, ContextType, RequireFields<MutationDeleteMajorArgs, 'where'>>;
+  deleteOrganization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<MutationDeleteOrganizationArgs, 'where'>>;
+  deletePackage?: Resolver<Maybe<ResolversTypes['Package']>, ParentType, ContextType, RequireFields<MutationDeletePackageArgs, 'where'>>;
   deleteSchool?: Resolver<Maybe<ResolversTypes['School']>, ParentType, ContextType, RequireFields<MutationDeleteSchoolArgs, 'where'>>;
   deleteSubject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<MutationDeleteSubjectArgs, 'where'>>;
   deleteUniversity?: Resolver<Maybe<ResolversTypes['University']>, ParentType, ContextType, RequireFields<MutationDeleteUniversityArgs, 'where'>>;
   deleteUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'where'>>;
+  purchasePackage?: Resolver<ResolversTypes['Purchase'], ParentType, ContextType, RequireFields<MutationPurchasePackageArgs, 'data'>>;
   register?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'data'>>;
   requestPasswordReset?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationRequestPasswordResetArgs, 'data'>>;
   resetPassword?: Resolver<Maybe<ResolversTypes['Authentication']>, ParentType, ContextType, RequireFields<MutationResetPasswordArgs, 'data'>>;
   sendAdminMessage?: Resolver<Maybe<ResolversTypes['AdminMessage']>, ParentType, ContextType, RequireFields<MutationSendAdminMessageArgs, 'data'>>;
   sendMessageToChat?: Resolver<ResolversTypes['ChatMessage'], ParentType, ContextType, RequireFields<MutationSendMessageToChatArgs, 'data'>>;
+  toggleConnectionWithUser?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationToggleConnectionWithUserArgs, 'where'>>;
   updateAd?: Resolver<Maybe<ResolversTypes['Ad']>, ParentType, ContextType, RequireFields<MutationUpdateAdArgs, 'data' | 'where'>>;
+  updateClass?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<MutationUpdateClassArgs, 'data' | 'where'>>;
+  updateCollege?: Resolver<Maybe<ResolversTypes['College']>, ParentType, ContextType, RequireFields<MutationUpdateCollegeArgs, 'data' | 'where'>>;
+  updateCourse?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<MutationUpdateCourseArgs, 'data' | 'where'>>;
   updateGrade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<MutationUpdateGradeArgs, 'data' | 'where'>>;
   updateMajor?: Resolver<Maybe<ResolversTypes['Major']>, ParentType, ContextType, RequireFields<MutationUpdateMajorArgs, 'data' | 'where'>>;
+  updateMyClass?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<MutationUpdateMyClassArgs, 'data' | 'where'>>;
   updateMyUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateMyUserArgs, 'data'>>;
+  updateOrganization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<MutationUpdateOrganizationArgs, 'data' | 'where'>>;
+  updatePackage?: Resolver<Maybe<ResolversTypes['Package']>, ParentType, ContextType, RequireFields<MutationUpdatePackageArgs, 'data' | 'where'>>;
   updateSchool?: Resolver<Maybe<ResolversTypes['School']>, ParentType, ContextType, RequireFields<MutationUpdateSchoolArgs, 'data' | 'where'>>;
   updateSubject?: Resolver<Maybe<ResolversTypes['Subject']>, ParentType, ContextType, RequireFields<MutationUpdateSubjectArgs, 'data' | 'where'>>;
   updateUniversity?: Resolver<Maybe<ResolversTypes['University']>, ParentType, ContextType, RequireFields<MutationUpdateUniversityArgs, 'data' | 'where'>>;
@@ -1571,7 +2110,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
 };
 
 export type NotificationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Notification'] = ResolversParentTypes['Notification']> = {
-  connection?: Resolver<Maybe<ResolversTypes['Connection']>, ParentType, ContextType>;
+  connection?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   liveStream?: Resolver<Maybe<ResolversTypes['LiveStream']>, ParentType, ContextType>;
@@ -1602,15 +2141,30 @@ export type OrganizationResolvers<ContextType = Context, ParentType extends Reso
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type PurchaseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Purchase'] = ResolversParentTypes['Purchase']> = {
-  class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType>;
+export type PackageResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Package'] = ResolversParentTypes['Package']> = {
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  points?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-  transactionId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  type?: Resolver<ResolversTypes['PurchaseType'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nameAr?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  points?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
-  wallet?: Resolver<ResolversTypes['Wallet'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type PurchaseResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Purchase'] = ResolversParentTypes['Purchase']> = {
+  class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType>;
+  className?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  classNameAr?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  packageName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  packageNameAr?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  points?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  price?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  transactionId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
+  wallet?: Resolver<Maybe<ResolversTypes['Wallet']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1624,6 +2178,15 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   chats?: Resolver<Array<ResolversTypes['Chat']>, ParentType, ContextType, RequireFields<QueryChatsArgs, 'skip' | 'take' | 'where'>>;
   chatsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryChatsCountArgs, 'where'>>;
   checkEmail?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<QueryCheckEmailArgs, 'data'>>;
+  class?: Resolver<Maybe<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassArgs, 'where'>>;
+  classes?: Resolver<Array<ResolversTypes['Class']>, ParentType, ContextType, RequireFields<QueryClassesArgs, 'skip' | 'take' | 'where'>>;
+  classesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryClassesCountArgs, 'where'>>;
+  college?: Resolver<Maybe<ResolversTypes['College']>, ParentType, ContextType, RequireFields<QueryCollegeArgs, 'where'>>;
+  colleges?: Resolver<Array<ResolversTypes['College']>, ParentType, ContextType, RequireFields<QueryCollegesArgs, 'skip' | 'take' | 'where'>>;
+  collegesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryCollegesCountArgs, 'where'>>;
+  course?: Resolver<Maybe<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCourseArgs, 'where'>>;
+  courses?: Resolver<Array<ResolversTypes['Course']>, ParentType, ContextType, RequireFields<QueryCoursesArgs, 'skip' | 'take' | 'where'>>;
+  coursesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryCoursesCountArgs, 'where'>>;
   grade?: Resolver<Maybe<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradeArgs, 'where'>>;
   grades?: Resolver<Array<ResolversTypes['Grade']>, ParentType, ContextType, RequireFields<QueryGradesArgs, 'skip' | 'take' | 'where'>>;
   gradesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryGradesCountArgs, 'where'>>;
@@ -1632,6 +2195,13 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   majors?: Resolver<Array<ResolversTypes['Major']>, ParentType, ContextType, RequireFields<QueryMajorsArgs, 'skip' | 'take' | 'where'>>;
   majorsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryMajorsCountArgs, 'where'>>;
   myUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+  myWallet?: Resolver<Maybe<ResolversTypes['Wallet']>, ParentType, ContextType>;
+  organization?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<QueryOrganizationArgs, 'where'>>;
+  organizations?: Resolver<Array<ResolversTypes['Organization']>, ParentType, ContextType, RequireFields<QueryOrganizationsArgs, 'skip' | 'take' | 'where'>>;
+  organizationsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryOrganizationsCountArgs, 'where'>>;
+  package?: Resolver<Maybe<ResolversTypes['Package']>, ParentType, ContextType, RequireFields<QueryPackageArgs, 'where'>>;
+  packages?: Resolver<Array<ResolversTypes['Package']>, ParentType, ContextType, RequireFields<QueryPackagesArgs, 'skip' | 'take' | 'where'>>;
+  packagesCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryPackagesCountArgs, 'where'>>;
   school?: Resolver<Maybe<ResolversTypes['School']>, ParentType, ContextType, RequireFields<QuerySchoolArgs, 'where'>>;
   schools?: Resolver<Array<ResolversTypes['School']>, ParentType, ContextType, RequireFields<QuerySchoolsArgs, 'skip' | 'take' | 'where'>>;
   schoolsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QuerySchoolsCountArgs, 'where'>>;
@@ -1644,6 +2214,8 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'where'>>;
   users?: Resolver<Array<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUsersArgs, 'skip' | 'take' | 'where'>>;
   usersCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryUsersCountArgs, 'where'>>;
+  wallets?: Resolver<Array<ResolversTypes['Wallet']>, ParentType, ContextType, RequireFields<QueryWalletsArgs, 'skip' | 'take' | 'where'>>;
+  walletsCount?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType, RequireFields<QueryWalletsCountArgs, 'where'>>;
 };
 
 export type SchoolResolvers<ContextType = Context, ParentType extends ResolversParentTypes['School'] = ResolversParentTypes['School']> = {
@@ -1672,7 +2244,7 @@ export type StudentResolvers<ContextType = Context, ParentType extends Resolvers
 };
 
 export type SubjectResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subject'] = ResolversParentTypes['Subject']> = {
-  classes?: Resolver<Maybe<Array<ResolversTypes['Class']>>, ParentType, ContextType>;
+  courses?: Resolver<Maybe<Array<ResolversTypes['Course']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   createdBy?: Resolver<Maybe<ResolversTypes['Organization']>, ParentType, ContextType>;
   educators?: Resolver<Maybe<Array<ResolversTypes['Educator']>>, ParentType, ContextType>;
@@ -1712,13 +2284,13 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 }
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  connections?: Resolver<Maybe<Array<ResolversTypes['Connection']>>, ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;
   educator?: Resolver<Maybe<ResolversTypes['Educator']>, ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   firstName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   gender?: Resolver<ResolversTypes['Gender'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isConnected?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
   lastName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   mobile?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -1746,7 +2318,7 @@ export type Resolvers<ContextType = Context> = {
   ChatMessage?: ChatMessageResolvers<ContextType>;
   Class?: ClassResolvers<ContextType>;
   College?: CollegeResolvers<ContextType>;
-  Connection?: ConnectionResolvers<ContextType>;
+  Course?: CourseResolvers<ContextType>;
   Date?: GraphQLScalarType;
   Educator?: EducatorResolvers<ContextType>;
   Grade?: GradeResolvers<ContextType>;
@@ -1758,6 +2330,7 @@ export type Resolvers<ContextType = Context> = {
   NullableID?: GraphQLScalarType;
   NullableString?: GraphQLScalarType;
   Organization?: OrganizationResolvers<ContextType>;
+  Package?: PackageResolvers<ContextType>;
   Purchase?: PurchaseResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   School?: SchoolResolvers<ContextType>;

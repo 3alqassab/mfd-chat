@@ -15,6 +15,7 @@ extend type Mutation {
 	updateMyUser(data: MyUserUpdateInput!): User
 	updateUser(where: UserWhereUniqueInput!, data: UserUpdateInput!): User
 	deleteUser(where: UserWhereUniqueInput!): User
+	toggleConnectionWithUser(where: ToggleConnectionWithUserInput!): Boolean
 }
 
 enum UserRole {
@@ -70,7 +71,7 @@ type User {
 	student: Student
 	educator: Educator
 	wallet: Wallet!
-	connections: [Connection!]
+	isConnected: Boolean
 
 	createdAt: Date!
 	updatedAt: Date!
@@ -132,4 +133,8 @@ input UserOrderByInput {
 	role: OrderDirection
 
 	createdAt: OrderDirection
+}
+
+input ToggleConnectionWithUserInput {
+	id: ID!
 }

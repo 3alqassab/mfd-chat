@@ -9,8 +9,8 @@ export default {
 			})
 		},
 
-		async classes({ id }, _, { database }) {
-			return await database.class.findMany({
+		async courses({ id }, _, { database }) {
+			return await database.course.findMany({
 				where: { subject: { id } },
 			})
 		},
@@ -33,14 +33,14 @@ export default {
 	Mutation: {
 		async createSubject(
 			_,
-			{ data: { createdById, majorId, thumbnail, ...rest } },
+			{ data: { createdById, majorsIds, thumbnail, ...rest } },
 			{ database, requireAuth, isAdmin },
 		) {
 			requireAuth(isAdmin)
 
 			const data: Prisma.SubjectCreateInput = {
 				thumbnailUrl: thumbnail,
-				major: { connect: { id: majorId } },
+				majors: { connect: majorsIds?.map(id => ({ id })) },
 				createdBy: { connect: { id: createdById } },
 				...rest,
 			}
@@ -50,14 +50,15 @@ export default {
 
 		async updateSubject(
 			_,
-			{ data: { thumbnail, majorId, createdById, ...rest }, where },
+			{ data: { thumbnail, majorsIds, createdById, ...rest }, where },
 			{ database, requireAuth, isAdmin },
 		) {
 			requireAuth(isAdmin)
 
 			const data: Prisma.SubjectUpdateInput = {
 				thumbnailUrl: thumbnail,
-				major: { connect: { id: majorId } },
+				majors: { set: majorsIds?.map(id => ({ id })) },
+
 				createdBy: { connect: { id: createdById } },
 				...rest,
 			}
